@@ -1,0 +1,81 @@
+# KIS OpenAPI
+
+```elixir
+Mix.install([
+  {:req, "~> 0.5.8"}
+])
+```
+
+## Section
+
+```elixir
+appkey = System.fetch_env!("LB_KIS_APPKEY")
+```
+
+```elixir
+secretkey = System.fetch_env!("LB_KIS_SECRETKEY")
+```
+
+```elixir
+Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/Approval",
+  json: %{
+    appkey: appkey,
+    secretkey: secretkey
+  }
+)
+```
+
+```elixir
+Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/tokenP",
+  json: %{
+    grant_type: "client_credentials",
+    appkey: appkey,
+    appsecret: secretkey
+  }
+)
+```
+
+```elixir
+access_token = System.fetch_env!("LB_KIS_ACCESS_TOKEN")
+```
+
+```elixir
+req =
+  Req.new(
+    base_url: "https://openapivts.koreainvestment.com:29443",
+    retry: false,
+    auth: {:bearer, access_token},
+    headers: %{
+      appkey: appkey,
+      appsecret: secretkey
+    }
+  )
+```
+
+```elixir
+Req.get!(req,
+  url: "/uapi/domestic-stock/v1/quotations/inquire-price",
+  headers: %{
+    "tr_id" => "FHKST01010100"
+  },
+  params: %{
+    FID_COND_MRKT_DIV_CODE: "J",
+    FID_INPUT_ISCD: "A005930"
+  }
+)
+```
+
+```elixir
+Req.get!(req,
+  url: "/uapi/overseas-price/v1/quotations/price",
+  headers: %{
+    "tr_id" => "HHDFS00000300"
+  },
+  params: %{
+    "EXCD" => "NAS",
+    "SYMB" => "NVDA"
+  }
+)
+```
+
+<!-- livebook:{"offset":1245,"stamp":{"token":"XCP.Oq6laT3UA7eNDedAmQIDJwoJ_fclKVGgXUKZvkOLg9xtxyX67k4Uexm7xDV39gksfWlA30KO75AdrWKW7lOAd59L8jAdHAZ85GOP5LzPdnDZIZgaermaMmp4Snw7WpdgeSkRITB_Sg","version":2}} -->
