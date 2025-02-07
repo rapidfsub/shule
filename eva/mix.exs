@@ -37,7 +37,8 @@ defmodule Eva.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:igniter, "~> 0.5", only: [:dev, :test]}
+      {:req, ">= 0.0.0"},
+      {:igniter, ">= 0.0.0", only: [:dev, :test]}
     ]
   end
 
