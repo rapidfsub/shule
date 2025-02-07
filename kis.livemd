@@ -2,7 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:req, "~> 0.5.8"}
+  {:req, "~> 0.5.8"},
+  {:websockex, "~> 0.4.3"}
 ])
 ```
 
@@ -17,26 +18,67 @@ secretkey = System.fetch_env!("LB_KIS_SECRETKEY")
 ```
 
 ```elixir
-Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/Approval",
-  json: %{
-    appkey: appkey,
-    secretkey: secretkey
-  }
-)
+"" <> approval_key =
+  case System.fetch_env("LB_KIS_APPROVAL_KEY") |> IO.inspect() do
+    {:ok, approval_key} ->
+      approval_key
+
+    :error ->
+      res =
+        Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/Approval",
+          json: %{
+            appkey: appkey,
+            secretkey: secretkey
+          }
+        )
+
+      get_in(res.body["approval_key"])
+  end
 ```
 
 ```elixir
-Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/tokenP",
-  json: %{
-    grant_type: "client_credentials",
-    appkey: appkey,
-    appsecret: secretkey
-  }
-)
+defmodule KisClient do
+  use WebSockex
+
+  @url "ws://ops.koreainvestment.com:21000/tryitout/HDFSCNT0"
+  def start_link(state) do
+    WebSockex.start_link(@url, __MODULE__, state)
+  end
+
+  def handle_frame({type, msg}, state) do
+    IO.puts("Received Message - Type: #{inspect(type)} -- Message: #{inspect(msg)}")
+    {:ok, state}
+  end
+
+  def handle_cast({:send, {type, msg} = frame}, state) do
+    IO.puts("Sending #{type} frame with payload: #{msg}")
+    {:reply, frame, state}
+  end
+end
 ```
 
 ```elixir
-access_token = System.fetch_env!("LB_KIS_ACCESS_TOKEN")
+KisClient.start_link(debug: [:trace])
+```
+
+```elixir
+"" <> access_token =
+  case System.fetch_env("LB_KIS_ACCESS_TOKEN") |> IO.inspect() do
+    {:ok, access_token} ->
+      access_token
+
+    :error ->
+      res =
+        Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/tokenP",
+          json: %{
+            grant_type: "client_credentials",
+            appkey: appkey,
+            appsecret: secretkey
+          }
+        )
+
+      get_in(res.body["access_token"])
+  end
 ```
 
 ```elixir
@@ -78,4 +120,4 @@ Req.get!(req,
 )
 ```
 
-<!-- livebook:{"offset":1245,"stamp":{"token":"XCP.Oq6laT3UA7eNDedAmQIDJwoJ_fclKVGgXUKZvkOLg9xtxyX67k4Uexm7xDV39gksfWlA30KO75AdrWKW7lOAd59L8jAdHAZ85GOP5LzPdnDZIZgaermaMmp4Snw7WpdgeSkRITB_Sg","version":2}} -->
+<!-- livebook:{"offset":2276,"stamp":{"token":"XCP.RJa-gjGVVlFgR7TrXtVH2C5-SR4CMIj2O4Pbu3Bf5stJ2y3d3wuaAJNuBdkTQqqZ4mUN6-CjvtS64I0vP1Ar71XEIr45DXJlki2Tp9ap2XyJFhuQUrLAEPoMIWkONjSh1USbZauDOQ","version":2}} -->
