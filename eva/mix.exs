@@ -10,7 +10,11 @@ defmodule Eva.MixProject do
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :dev,
       aliases: aliases(),
-      deps: deps()
+      deps:
+        Enum.concat([
+          deps(),
+          phx_deps()
+        ])
     ]
   end
 
@@ -33,7 +37,12 @@ defmodule Eva.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:igniter, "~> 0.5", only: [:dev, :test]},
+      {:igniter, "~> 0.5", only: [:dev, :test]}
+    ]
+  end
+
+  defp phx_deps do
+    [
       {:phoenix, "~> 1.7.19"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
