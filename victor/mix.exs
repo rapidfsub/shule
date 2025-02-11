@@ -10,7 +10,7 @@ defmodule Victor.MixProject do
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :dev,
       aliases: aliases(),
-      deps: deps()
+      deps: Enum.concat([deps(), non_prod_deps(), phx_deps()])
     ]
   end
 
@@ -31,9 +31,21 @@ defmodule Victor.MixProject do
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
-  defp deps do
+  defp deps() do
     [
-      {:igniter, "~> 0.5", only: [:dev, :test]},
+      {:ash, ">= 0.0.0"}
+    ]
+  end
+
+  defp non_prod_deps() do
+    [
+      {:sourceror, ">= 0.0.0", only: [:dev, :test]},
+      {:igniter, ">= 0.0.0", only: [:dev, :test]}
+    ]
+  end
+
+  defp phx_deps() do
+    [
       {:phoenix, "~> 1.7.19"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
