@@ -1,0 +1,123 @@
+# KIS OpenAPI
+
+```elixir
+Mix.install([
+  {:req, "~> 0.5.8"},
+  {:websockex, "~> 0.4.3"}
+])
+```
+
+## Section
+
+```elixir
+appkey = System.fetch_env!("LB_KIS_APPKEY")
+```
+
+```elixir
+secretkey = System.fetch_env!("LB_KIS_SECRETKEY")
+```
+
+```elixir
+"" <> approval_key =
+  case System.fetch_env("LB_KIS_APPROVAL_KEY") |> IO.inspect() do
+    {:ok, approval_key} ->
+      approval_key
+
+    :error ->
+      res =
+        Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/Approval",
+          json: %{
+            appkey: appkey,
+            secretkey: secretkey
+          }
+        )
+
+      get_in(res.body["approval_key"])
+  end
+```
+
+```elixir
+defmodule KisClient do
+  use WebSockex
+
+  @url "ws://ops.koreainvestment.com:21000/tryitout/HDFSCNT0"
+  def start_link(state) do
+    WebSockex.start_link(@url, __MODULE__, state)
+  end
+
+  def handle_frame({type, msg}, state) do
+    IO.puts("Received Message - Type: #{inspect(type)} -- Message: #{inspect(msg)}")
+    {:ok, state}
+  end
+
+  def handle_cast({:send, {type, msg} = frame}, state) do
+    IO.puts("Sending #{type} frame with payload: #{msg}")
+    {:reply, frame, state}
+  end
+end
+```
+
+```elixir
+KisClient.start_link(debug: [:trace])
+```
+
+```elixir
+"" <> access_token =
+  case System.fetch_env("LB_KIS_ACCESS_TOKEN") |> IO.inspect() do
+    {:ok, access_token} ->
+      access_token
+
+    :error ->
+      res =
+        Req.post!("https://openapivts.koreainvestment.com:29443/oauth2/tokenP",
+          json: %{
+            grant_type: "client_credentials",
+            appkey: appkey,
+            appsecret: secretkey
+          }
+        )
+
+      get_in(res.body["access_token"])
+  end
+```
+
+```elixir
+req =
+  Req.new(
+    base_url: "https://openapivts.koreainvestment.com:29443",
+    retry: false,
+    auth: {:bearer, access_token},
+    headers: %{
+      appkey: appkey,
+      appsecret: secretkey
+    }
+  )
+```
+
+```elixir
+Req.get!(req,
+  url: "/uapi/domestic-stock/v1/quotations/inquire-price",
+  headers: %{
+    "tr_id" => "FHKST01010100"
+  },
+  params: %{
+    FID_COND_MRKT_DIV_CODE: "J",
+    FID_INPUT_ISCD: "A005930"
+  }
+)
+```
+
+```elixir
+Req.get!(req,
+  url: "/uapi/overseas-price/v1/quotations/price",
+  headers: %{
+    "tr_id" => "HHDFS00000300"
+  },
+  params: %{
+    "EXCD" => "NAS",
+    "SYMB" => "NVDA"
+  }
+)
+```
+
+<!-- livebook:{"offset":2276,"stamp":{"token":"XCP.RJa-gjGVVlFgR7TrXtVH2C5-SR4CMIj2O4Pbu3Bf5stJ2y3d3wuaAJNuBdkTQqqZ4mUN6-CjvtS64I0vP1Ar71XEIr45DXJlki2Tp9ap2XyJFhuQUrLAEPoMIWkONjSh1USbZauDOQ","version":2}} -->
