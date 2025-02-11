@@ -1,5 +1,6 @@
 [
   import_deps: [
+    :ash_postgres,
     :ash,
     # default
     :ecto,

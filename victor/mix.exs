@@ -9,7 +9,7 @@ defmodule Victor.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :dev,
-      aliases: aliases(),
+      aliases: Enum.concat(aliases(), phx_aliases()),
       deps: Enum.concat([deps(), non_prod_deps(), phx_deps()])
     ]
   end
@@ -33,7 +33,8 @@ defmodule Victor.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps() do
     [
-      {:ash, ">= 0.0.0"}
+      {:ash, ">= 0.0.0"},
+      {:ash_postgres, ">= 0.0.0"}
     ]
   end
 
@@ -81,12 +82,19 @@ defmodule Victor.MixProject do
   #     $ mix setup
   #
   # See the documentation for `Mix` for more info on aliases.
-  defp aliases do
+  defp aliases() do
     [
-      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+      setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "run priv/repo/seeds.exs"],
+      test: ["ash.setup --quiet", "test"]
+    ]
+  end
+
+  defp phx_aliases() do
+    [
+      # setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      # test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind victor", "esbuild victor"],
       "assets.deploy": [
