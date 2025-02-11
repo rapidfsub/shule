@@ -1,7 +1,7 @@
 defmodule Victor.Defrelay.DefaultDsl do
   defmodule Relay do
-    @args [:fun]
-    @enforce_keys @args ++ []
+    @args [:fname]
+    @enforce_keys @args ++ [:rename_to]
     defstruct @enforce_keys
 
     def entity() do
@@ -10,9 +10,12 @@ defmodule Victor.Defrelay.DefaultDsl do
         name: :relay,
         args: @args,
         schema: [
-          fun: [
+          fname: [
             type: :atom,
             required: true
+          ],
+          rename_to: [
+            type: :atom
           ]
         ]
       }
