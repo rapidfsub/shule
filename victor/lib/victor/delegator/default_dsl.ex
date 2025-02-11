@@ -1,20 +1,20 @@
-defmodule Victor.Defrelay.DefaultDsl do
-  defmodule Relay do
+defmodule Victor.Delegator.DefaultDsl do
+  defmodule Delegate do
     @args [:fname]
-    @enforce_keys @args ++ [:rename_to]
+    @enforce_keys @args ++ [:as]
     defstruct @enforce_keys
 
     def entity() do
       %Spark.Dsl.Entity{
         target: __MODULE__,
-        name: :relay,
+        name: :delegate,
         args: @args,
         schema: [
           fname: [
             type: :atom,
             required: true
           ],
-          rename_to: [
+          as: [
             type: :atom
           ]
         ]
@@ -22,15 +22,15 @@ defmodule Victor.Defrelay.DefaultDsl do
     end
   end
 
-  defmodule Target do
+  defmodule To do
     @args [:mod]
-    @enforce_keys @args ++ [:relays]
+    @enforce_keys @args ++ [:delegates]
     defstruct @enforce_keys
 
     def entity() do
       %Spark.Dsl.Entity{
         target: __MODULE__,
-        name: :target,
+        name: :to,
         args: @args,
         schema: [
           mod: [
@@ -39,20 +39,18 @@ defmodule Victor.Defrelay.DefaultDsl do
           ]
         ],
         entities: [
-          relays: [Relay.entity()]
+          delegates: [Delegate.entity()]
         ]
       }
     end
   end
 
-  @defrelay %Spark.Dsl.Section{
-    name: :defrelay,
-    entities: [
-      Target.entity()
-    ]
+  @delegates %Spark.Dsl.Section{
+    name: :delegates,
+    entities: [To.entity()]
   }
 
   use Spark.Dsl.Extension,
-    sections: [@defrelay],
-    transformers: [Victor.Defrelay.Transformer]
+    sections: [@delegates],
+    transformers: [Victor.Delegator.Transformer]
 end

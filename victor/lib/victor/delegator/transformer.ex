@@ -1,18 +1,18 @@
-defmodule Victor.Defrelay.Transformer do
+defmodule Victor.Delegator.Transformer do
   use Spark.Dsl.Transformer
   alias Spark.Dsl.Transformer
 
   @impl true
   def transform(state) do
-    for target <- Transformer.get_entities(state, [:defrelay]),
-        relay <- target.relays,
+    for to <- Transformer.get_entities(state, [:delegates]),
+        delegate <- to.delegates,
         reduce: {:ok, state} do
       {:ok, state} ->
-        dname = relay.rename_to || relay.fname
+        orig_fname = delegate.as || delegate.fname
 
         blocks =
-          for {args, doc} <- list_info(target.mod, relay.fname) do
-            get_block(dname, args, doc, to: target.mod, as: relay.fname)
+          for {args, doc} <- list_info(to.mod, orig_fname) do
+            get_block(delegate.fname, args, doc, to: to.mod, as: orig_fname)
           end
 
         {:ok, Transformer.eval(state, [], blocks)}
