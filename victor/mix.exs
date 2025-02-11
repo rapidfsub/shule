@@ -35,7 +35,8 @@ defmodule Victor.MixProject do
     [
       {:ash, ">= 0.0.0"},
       {:ash_postgres, ">= 0.0.0"},
-      {:ash_phoenix, ">= 0.0.0"}
+      {:ash_phoenix, ">= 0.0.0"},
+      {:spark, ">= 0.0.0"}
     ]
   end
 
