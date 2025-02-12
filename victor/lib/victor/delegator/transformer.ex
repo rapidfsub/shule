@@ -9,15 +9,32 @@ defmodule Victor.Delegator.Transformer do
         {delegate_to.target, delegate_to}
       end
 
-    for {target, delegate_to} <- delegates,
-        {fname, _aty, args, doc} <-
-          target
-          |> list_faads()
-          |> filter_faads(delegate_to.only, delegate_to.except),
-        reduce: {:ok, state} do
+    for {target, delegate_to} <- delegates, reduce: {:ok, state} do
       {:ok, state} ->
-        delegate = get_delegate(fname, args, doc, to: target)
-        {:ok, Transformer.eval(state, [], delegate)}
+        only = delegate_to.only && MapSet.new(delegate_to.only)
+        except = MapSet.new(delegate_to.except)
+
+        defs =
+          for define <- delegate_to.defs, into: %{} do
+            as_or_name = define.as || define.name
+
+            key =
+              if define.arity do
+                {as_or_name, define.arity}
+              else
+                as_or_name
+              end
+
+            {key, define}
+          end
+
+        for faad <- list_faads(target),
+            {fname, args, doc, opts} <- list_fados(faad, target, only, except, defs),
+            reduce: {:ok, state} do
+          {:ok, state} ->
+            delegate = get_delegate(fname, args, doc, opts)
+            {:ok, Transformer.eval(state, [], delegate)}
+        end
     end
   end
 
@@ -73,23 +90,22 @@ defmodule Victor.Delegator.Transformer do
     end
   end
 
-  defp filter_faads(faads, nil, nil) do
-    faads
-  end
+  defp list_fados({fname, arity, args, doc}, target, only, except, defs) do
+    keys = MapSet.new([fname, {fname, arity}])
+    define = Map.get(defs, fname) || Map.get(defs, {fname, arity})
 
-  defp filter_faads(faads, nil, except) do
-    for {fname, aty, _args, _doc} = faad <- faads,
-        fname not in except and {fname, aty} not in except do
-      faad
-    end
-  end
-
-  defp filter_faads(faads, only, except) do
-    for {fname, aty, _args, _doc} = faad <- faads,
-        fname in only or {fname, aty} in only do
-      faad
-    end
-    |> filter_faads(nil, except)
+    [
+      if !(only && MapSet.disjoint?(only, keys)) && MapSet.disjoint?(except, keys) do
+        # fado
+        {fname, args, doc, to: target}
+      end,
+      if define do
+        as_or_name = define.as || define.name
+        # fado
+        {define.name, args, doc, to: target, as: as_or_name}
+      end
+    ]
+    |> Enum.filter(&Function.identity/1)
   end
 
   defp get_delegate(fname, args, doc, opts) do

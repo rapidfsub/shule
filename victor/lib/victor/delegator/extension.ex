@@ -1,7 +1,33 @@
 defmodule Victor.Delegator.Extension do
+  defmodule Define do
+    @args [:name]
+    @enforce_keys @args ++ [:arity, :as]
+    defstruct @enforce_keys
+
+    def entity() do
+      %Spark.Dsl.Entity{
+        target: __MODULE__,
+        name: :define,
+        args: @args,
+        schema: [
+          name: [
+            type: :atom,
+            required: true
+          ],
+          arity: [
+            type: :integer
+          ],
+          as: [
+            type: :atom
+          ]
+        ]
+      }
+    end
+  end
+
   defmodule DelegateTo do
     @args [:target]
-    @enforce_keys @args ++ [:only, :except]
+    @enforce_keys @args ++ [:only, :except, :entities, :defs]
     defstruct @enforce_keys
 
     @f_or_fa {:or, [:atom, {:tuple, [:atom, :non_neg_integer]}]}
@@ -20,8 +46,12 @@ defmodule Victor.Delegator.Extension do
             type: {:list, @f_or_fa}
           ],
           except: [
-            type: {:list, @f_or_fa}
+            type: {:list, @f_or_fa},
+            default: []
           ]
+        ],
+        entities: [
+          defs: [Define.entity()]
         ]
       }
     end
