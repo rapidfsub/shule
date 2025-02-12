@@ -2,58 +2,54 @@ defmodule Victor.Delegator.Transformer do
   use Spark.Dsl.Transformer
   alias Spark.Dsl.Transformer
 
-  @impl true
+  @impl Transformer
   def transform(state) do
-    for to <- Transformer.get_entities(state, [:delegates]),
-        delegate <- to.delegates,
+    delegates =
+      for delegate_to <- Transformer.get_entities(state, [:delegates]), into: %{} do
+        {delegate_to.target, delegate_to}
+      end
+
+    for {target, delegate_to} <- delegates,
+        {fname, _aty, args, doc} <-
+          target
+          |> list_faads()
+          |> filter_faads(delegate_to.only, delegate_to.except),
         reduce: {:ok, state} do
       {:ok, state} ->
-        orig_fname = delegate.as || delegate.fname
-
-        blocks =
-          for {args, doc} <- list_info(to.mod, orig_fname) do
-            get_block(delegate.fname, args, doc, to: to.mod, as: orig_fname)
-          end
-
-        {:ok, Transformer.eval(state, [], blocks)}
+        delegate = get_delegate(fname, args, doc, to: target)
+        {:ok, Transformer.eval(state, [], delegate)}
     end
   end
 
-  defp list_info(mod, fname) do
-    case list_info_from_docs(mod, fname) do
-      [] -> list_info_from_module(mod, fname)
-      result -> result
-    end
-    |> case do
-      [] -> raise "#{inspect({mod, fname})} not found"
-      result -> result
-    end
-  end
-
-  defp list_info_from_docs(mod, fname) do
-    case Code.fetch_docs(mod) do
+  defp list_faads(target) do
+    case Code.fetch_docs(target) do
       {:docs_v1, _annotation, _beam_language, _format, _module_doc, _metadata, docs} ->
-        for doc = {{:function, ^fname, _arity}, _annotation, _signature, _doc_content, _metadata} <-
-              docs,
-            info <- list_info_from_doc(doc) do
-          info
+        for doc <- docs, faad <- list_doc_faads(doc) do
+          faad
         end
 
       {:error, _reason} ->
-        []
+        for {fname, aty} <- target.__info__(:functions) do
+          # faad
+          {fname, aty, get_dummy_args(aty), nil}
+        end
     end
   end
 
-  defp list_info_from_doc({{:function, fname, arity}, _annotation, [sig], doc_content, metadata}) do
-    {^fname, _fun_meta, fun_args} = Code.string_to_quoted!(sig)
+  defp list_doc_faads({{:function, _fname, _aty}, _annotation, _signature, :hidden, _metadata}) do
+    []
+  end
+
+  defp list_doc_faads({{:function, fname, _aty}, _annotation, [sig], doc_content, metadata}) do
+    {^fname, _meta, args_with_defaults} = Code.string_to_quoted!(sig)
+    arity = length(args_with_defaults)
+    defaults = Map.get(metadata, :defaults, 0)
 
     args =
-      Enum.map(fun_args, fn
+      Enum.map(args_with_defaults, fn
         {:\\, _meta, [arg, _default]} -> arg
         arg -> arg
       end)
-
-    defaults = Map.get(metadata, :defaults, 0)
 
     doc =
       case doc_content do
@@ -62,22 +58,41 @@ defmodule Victor.Delegator.Transformer do
       end
 
     for aty <- (arity - defaults)..arity//1 do
-      {Enum.take(args, aty), doc}
+      # faad
+      {fname, aty, Enum.take(args, aty), doc}
     end
   end
 
-  defp list_info_from_module(mod, fname) do
-    for {^fname, arity} <- mod.__info__(:functions) do
-      args =
-        for aty <- 1..arity//1 do
-          Macro.var(:"x#{aty}", nil)
-        end
+  defp list_doc_faads(_doc) do
+    []
+  end
 
-      {args, nil}
+  defp get_dummy_args(arity) do
+    for aty <- 1..arity//1 do
+      Macro.var(:"x#{aty}", nil)
     end
   end
 
-  defp get_block(fname, args, doc, opts) do
+  defp filter_faads(faads, nil, nil) do
+    faads
+  end
+
+  defp filter_faads(faads, nil, except) do
+    for {fname, aty, _args, _doc} = faad <- faads,
+        fname not in except and {fname, aty} not in except do
+      faad
+    end
+  end
+
+  defp filter_faads(faads, only, except) do
+    for {fname, aty, _args, _doc} = faad <- faads,
+        fname in only or {fname, aty} in only do
+      faad
+    end
+    |> filter_faads(nil, except)
+  end
+
+  defp get_delegate(fname, args, doc, opts) do
     [
       if doc do
         quote do
