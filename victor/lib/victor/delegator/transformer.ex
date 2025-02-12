@@ -1,6 +1,6 @@
 defmodule Victor.Delegator.Transformer do
-  use Spark.Dsl.Transformer
   alias Spark.Dsl.Transformer
+  use Transformer
 
   @impl Transformer
   def transform(state) do
