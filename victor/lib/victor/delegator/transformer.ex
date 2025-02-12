@@ -92,7 +92,7 @@ defmodule Victor.Delegator.Transformer do
 
   defp list_fados({fname, arity, args, doc}, only, except, defs, opts) do
     keys = MapSet.new([fname, {fname, arity}])
-    define = Map.get(defs, fname) || Map.get(defs, {fname, arity})
+    define = Enum.find_value(keys, &Map.get(defs, &1))
 
     [
       if !(only && MapSet.disjoint?(only, keys)) && MapSet.disjoint?(except, keys) do
