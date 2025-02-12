@@ -29,7 +29,7 @@ defmodule Victor.Delegator.Transformer do
           end
 
         for faad <- list_faads(target),
-            {fname, args, doc, opts} <- list_fados(faad, target, only, except, defs),
+            {fname, args, doc, opts} <- list_fados(faad, only, except, defs, to: target),
             reduce: {:ok, state} do
           {:ok, state} ->
             delegate = get_delegate(fname, args, doc, opts)
@@ -90,19 +90,19 @@ defmodule Victor.Delegator.Transformer do
     end
   end
 
-  defp list_fados({fname, arity, args, doc}, target, only, except, defs) do
+  defp list_fados({fname, arity, args, doc}, only, except, defs, opts) do
     keys = MapSet.new([fname, {fname, arity}])
     define = Map.get(defs, fname) || Map.get(defs, {fname, arity})
 
     [
       if !(only && MapSet.disjoint?(only, keys)) && MapSet.disjoint?(except, keys) do
         # fado
-        {fname, args, doc, to: target}
+        {fname, args, doc, opts}
       end,
       if define do
         as_or_name = define.as || define.name
         # fado
-        {define.name, args, doc, to: target, as: as_or_name}
+        {define.name, args, doc, Keyword.put(opts, :as, as_or_name)}
       end
     ]
     |> Enum.filter(&Function.identity/1)
