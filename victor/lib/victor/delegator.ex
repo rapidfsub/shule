@@ -1,4 +1,6 @@
 defmodule Victor.Delegator do
+  # TODO: spark 사용 시 동일 모듈 내 자동완성이 동작하지 않으므로 spark 없이 구현
+
   defmodule Extension do
     defmodule Define do
       @args [:name]
