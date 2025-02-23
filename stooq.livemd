@@ -1,0 +1,55 @@
+# Stooq
+
+```elixir
+Mix.install([
+  {:explorer, "~> 0.10.1"},
+  {:kino_vega_lite, "~> 0.1.11"}
+])
+```
+
+## Section
+
+```elixir
+alias Explorer.DataFrame, as: Df
+require Df
+```
+
+```elixir
+duration = "daily"
+partition = "3"
+ticker = "swim"
+dir = Path.join([__DIR__, "stooq"])
+path = Path.join([dir, duration, "us", "nasdaq stocks", partition, "#{ticker}.us.txt"])
+```
+
+```elixir
+df = Df.from_csv!(path)
+```
+
+```elixir
+df =
+  Df.rename_with(df, fn name ->
+    name
+    |> String.trim_leading("<")
+    |> String.trim_trailing(">")
+    |> String.downcase()
+  end)
+```
+
+```elixir
+df =
+  Df.mutate(df, %{
+    date: cast(date, :string) |> strptime("%Y%m%d") |> cast(:date),
+    dollar_volume: (high + low + close) * vol / 3
+  })
+```
+
+<!-- livebook:{"attrs":"eyJjaGFydF90aXRsZSI6bnVsbCwiaGVpZ2h0IjpudWxsLCJsYXllcnMiOlt7ImFjdGl2ZSI6dHJ1ZSwiY2hhcnRfdHlwZSI6ImxpbmUiLCJjb2xvcl9maWVsZCI6bnVsbCwiY29sb3JfZmllbGRfYWdncmVnYXRlIjpudWxsLCJjb2xvcl9maWVsZF9iaW4iOm51bGwsImNvbG9yX2ZpZWxkX3NjYWxlX3NjaGVtZSI6bnVsbCwiY29sb3JfZmllbGRfdHlwZSI6bnVsbCwiZGF0YV92YXJpYWJsZSI6ImRmIiwiZ2VvZGF0YV9jb2xvciI6ImJsdWUiLCJsYXRpdHVkZV9maWVsZCI6bnVsbCwibG9uZ2l0dWRlX2ZpZWxkIjpudWxsLCJ4X2ZpZWxkIjoiZGF0ZSIsInhfZmllbGRfYWdncmVnYXRlIjpudWxsLCJ4X2ZpZWxkX2JpbiI6bnVsbCwieF9maWVsZF9zY2FsZV90eXBlIjpudWxsLCJ4X2ZpZWxkX3R5cGUiOiJ0ZW1wb3JhbCIsInlfZmllbGQiOiJkb2xsYXJfdm9sdW1lIiwieV9maWVsZF9hZ2dyZWdhdGUiOm51bGwsInlfZmllbGRfYmluIjpudWxsLCJ5X2ZpZWxkX3NjYWxlX3R5cGUiOm51bGwsInlfZmllbGRfdHlwZSI6InF1YW50aXRhdGl2ZSJ9XSwidmxfYWxpYXMiOiJFbGl4aXIuVmVnYUxpdGUiLCJ3aWR0aCI6NTAwfQ","chunks":null,"kind":"Elixir.KinoVegaLite.ChartCell","livebook_object":"smart_cell"} -->
+
+```elixir
+VegaLite.new(width: 500)
+|> VegaLite.data_from_values(df, only: ["date", "dollar_volume"])
+|> VegaLite.mark(:line)
+|> VegaLite.encode_field(:x, "date", type: :temporal)
+|> VegaLite.encode_field(:y, "dollar_volume", type: :quantitative)
+```
