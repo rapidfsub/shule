@@ -32,12 +32,15 @@ defmodule Emil.MixProject do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    []
+    [
+      {:ash, ">= 0.0.0"}
+    ]
   end
 
   defp dev_deps() do
     [
-      {:igniter, ">= 0.0.0", only: [:dev, :test]}
+      {:igniter, ">= 0.0.0", only: [:dev, :test]},
+      {:sourceror, ">= 0.0.0", only: [:dev, :test]}
     ]
   end
 
