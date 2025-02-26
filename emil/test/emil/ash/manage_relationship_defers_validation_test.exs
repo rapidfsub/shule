@@ -1,6 +1,6 @@
-defmodule Emil.Ash.ManageRelationshipDefersValidationTest.TodoList do
-  alias Emil.Ash.ManageRelationshipDefersValidationTest, as: Test
+alias Emil.Ash.ManageRelationshipDefersValidationTest, as: ThisTest
 
+defmodule ThisTest.TodoList do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -20,13 +20,11 @@ defmodule Emil.Ash.ManageRelationshipDefersValidationTest.TodoList do
   end
 
   relationships do
-    has_many :tasks, Test.Task
+    has_many :tasks, ThisTest.Task
   end
 end
 
-defmodule Emil.Ash.ManageRelationshipDefersValidationTest.Task do
-  alias Emil.Ash.ManageRelationshipDefersValidationTest, as: Test
-
+defmodule ThisTest.Task do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -46,19 +44,17 @@ defmodule Emil.Ash.ManageRelationshipDefersValidationTest.Task do
   end
 
   relationships do
-    belongs_to :todo_list, Test.TodoList, allow_nil?: false
+    belongs_to :todo_list, ThisTest.TodoList, allow_nil?: false
   end
 end
 
-defmodule Emil.Ash.ManageRelationshipDefersValidationTest do
-  alias __MODULE__.Task
-  alias __MODULE__.TodoList
+defmodule ThisTest do
   require Ash.Changeset
   use ExUnit.Case, async: true
 
   test "manage_relationship defers has_many validation" do
     params = %{title: "todo list", tasks: [%{}]}
-    changeset = Ash.Changeset.for_create(TodoList, :create_with_tasks, params)
+    changeset = Ash.Changeset.for_create(ThisTest.TodoList, :create_with_tasks, params)
 
     assert Ash.Changeset.is_valid(changeset)
     assert {:error, _error} = Ash.create(changeset)
@@ -66,7 +62,7 @@ defmodule Emil.Ash.ManageRelationshipDefersValidationTest do
 
   test "manage_relationship defers belongs_to validation" do
     params = %{title: "task", todo_list: %{}}
-    changeset = Ash.Changeset.for_create(Task, :create_with_todo_list, params)
+    changeset = Ash.Changeset.for_create(ThisTest.Task, :create_with_todo_list, params)
 
     assert Ash.Changeset.is_valid(changeset)
     assert {:error, _error} = Ash.create(changeset)
