@@ -28,7 +28,7 @@ defmodule Emil.Ash.GlobalChangesFollowLocalChangesTest do
   alias __MODULE__.Obj
   use ExUnit.Case, async: true
 
-  test "order of global" do
+  test "global changes follow local changes" do
     assert obj = Ash.Changeset.for_create(Obj, :create, %{}) |> Ash.create!()
     assert obj.name == "global"
   end
