@@ -7,12 +7,12 @@ defmodule Emil.Ash.CompareNilTest.Obj do
   end
 
   validations do
-    validate compare(:age, greater_than: 0)
+    validate compare(:x, greater_than: 0)
   end
 
   attributes do
     uuid_v7_primary_key :id
-    attribute :age, :decimal, public?: true
+    attribute :x, :decimal, public?: true
   end
 end
 
@@ -21,7 +21,7 @@ defmodule Emil.Ash.CompareNilTest do
   use ExUnit.Case, async: true
 
   test "compare validation passes when attribute is nil" do
-    assert {:error, _error} = Ash.Changeset.for_create(Obj, :create, %{age: -10}) |> Ash.create()
+    assert {:error, _error} = Ash.Changeset.for_create(Obj, :create, %{x: -10}) |> Ash.create()
     assert Ash.Changeset.for_create(Obj, :create, %{}) |> Ash.create!()
   end
 end
