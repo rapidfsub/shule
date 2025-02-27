@@ -1,4 +1,6 @@
-defmodule Emil.Ash.MissingArgumentValidationTest.Obj do
+alias Emil.Validation.MissingArgumentValidationTest, as: ThisTest
+
+defmodule ThisTest.Obj do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -21,12 +23,11 @@ defmodule Emil.Ash.MissingArgumentValidationTest.Obj do
   end
 end
 
-defmodule Emil.Ash.MissingArgumentValidationTest do
-  alias __MODULE__.Obj
+defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "validation fails when argument is missing" do
-    changeset = Ash.Changeset.for_create(Obj, :create, %{})
+    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create, %{})
     refute Ash.Changeset.get_argument(changeset, :hello)
     assert {:error, _error} = Ash.create(changeset)
   end

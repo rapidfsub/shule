@@ -1,4 +1,4 @@
-alias Emil.Ash.ManageRelationshipDefersValidationTest, as: ThisTest
+alias Emil.Change.ManageRelationshipDefersValidationTest, as: ThisTest
 
 defmodule ThisTest.TodoList do
   use Ash.Resource,
