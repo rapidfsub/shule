@@ -1,4 +1,6 @@
-defmodule Emil.Ash.GlobalChangesFollowLocalChangesTest.Obj do
+alias Emil.GlobalChangesFollowLocalChangesTest, as: ThisTest
+
+defmodule ThisTest.Obj do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -24,12 +26,11 @@ defmodule Emil.Ash.GlobalChangesFollowLocalChangesTest.Obj do
   end
 end
 
-defmodule Emil.Ash.GlobalChangesFollowLocalChangesTest do
-  alias __MODULE__.Obj
+defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "global changes follow local changes" do
-    assert obj = Ash.Changeset.for_create(Obj, :create, %{}) |> Ash.create!()
+    assert obj = Ash.Changeset.for_create(ThisTest.Obj, :create, %{}) |> Ash.create!()
     assert obj.name == "global"
   end
 end
