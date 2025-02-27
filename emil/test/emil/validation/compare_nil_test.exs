@@ -1,4 +1,6 @@
-defmodule Emil.Ash.CompareNilTest.Obj do
+alias Emil.Validation.CompareNilTest, as: ThisTest
+
+defmodule ThisTest.Obj do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -16,12 +18,13 @@ defmodule Emil.Ash.CompareNilTest.Obj do
   end
 end
 
-defmodule Emil.Ash.CompareNilTest do
-  alias __MODULE__.Obj
+defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "compare validation passes when attribute is nil" do
-    assert {:error, _error} = Ash.Changeset.for_create(Obj, :create, %{x: -10}) |> Ash.create()
-    assert Ash.Changeset.for_create(Obj, :create, %{}) |> Ash.create!()
+    assert {:error, _error} =
+             Ash.Changeset.for_create(ThisTest.Obj, :create, %{x: -10}) |> Ash.create()
+
+    assert Ash.Changeset.for_create(ThisTest.Obj, :create, %{}) |> Ash.create!()
   end
 end

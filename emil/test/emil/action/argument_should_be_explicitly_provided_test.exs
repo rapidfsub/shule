@@ -1,4 +1,6 @@
-defmodule Emil.Ash.ArgumentShouldBeExplicitlyProvidedTest.Obj do
+alias Emil.Action.ArgumentShouldBeExplicitlyProvidedTest, as: ThisTest
+
+defmodule ThisTest.Obj do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -23,16 +25,15 @@ defmodule Emil.Ash.ArgumentShouldBeExplicitlyProvidedTest.Obj do
   end
 end
 
-defmodule Emil.Ash.ArgumentShouldBeExplicitlyProvidedTest do
-  alias __MODULE__.Obj
+defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "argument should be passed explicitly" do
-    changeset = Ash.Changeset.for_create(Obj, :create)
+    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create)
     assert to_string(changeset.arguments.s2) == "in"
     assert {:error, _error} = Ash.create(changeset)
 
-    changeset = Ash.Changeset.for_create(Obj, :create, %{s2: "out"})
+    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create, %{s2: "out"})
     assert to_string(changeset.arguments.s2) == "in"
     assert Ash.create!(changeset)
   end

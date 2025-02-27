@@ -1,4 +1,6 @@
-defmodule Emil.Ash.ChangesetOmitsUnsetKeysTest.Obj do
+alias Emil.Changeset.ChangesetOmitsUnsetKeysTest, as: ThisTest
+
+defmodule ThisTest.Obj do
   use Ash.Resource,
     domain: Emil.TestDomain
 
@@ -17,12 +19,11 @@ defmodule Emil.Ash.ChangesetOmitsUnsetKeysTest.Obj do
   end
 end
 
-defmodule Emil.Ash.ChangesetOmitsUnsetKeysTest do
-  alias __MODULE__.Obj
+defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "changeset omits unset keys" do
-    assert changeset = Ash.Changeset.for_create(Obj, :create, %{s1: nil, d1: nil})
+    assert changeset = Ash.Changeset.for_create(ThisTest.Obj, :create, %{s1: nil, d1: nil})
 
     assert changeset.attributes.s1 == nil
     refute Map.has_key?(changeset.attributes, :s2)
