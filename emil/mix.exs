@@ -34,7 +34,8 @@ defmodule Emil.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash, ">= 0.0.0"}
+      {:ash, ">= 0.0.0"},
+      {:decimal, ">= 0.0.0"}
     ]
   end
 
