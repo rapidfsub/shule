@@ -1,0 +1,12 @@
+```{r}
+packages <- c(
+  "distrEx",
+  "mvtnorm"
+)
+
+for (pkg in packages) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg)
+  }
+}
+```
