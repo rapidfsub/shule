@@ -1,0 +1,50 @@
+---
+title: 8. 표본분포
+---
+
+```{r, message = FALSE}
+library(distrEx)
+library(distrTeach)
+library(TeachingDemos)
+```
+
+## 8-1. 이항분포의 모습 변화
+
+```{r}
+par(mfrow = c(2, 2))
+p <- 0.1
+x1 <- Binom(5, p)
+x2 <- Binom(10, p)
+x3 <- Binom(30, p)
+x4 <- Binom(100, p)
+
+fun <- function(rv, inner) {
+  plot(
+    rv,
+    cex.points = 1,
+    to.draw.arg = c("d"),
+    mfColRow = FALSE,
+    inner = inner,
+    xlab = ""
+  )
+}
+
+fun(x1, "B(5,0.1)")
+fun(x2, "B(10,0.1)")
+fun(x3, "B(30,0.1)")
+fun(x4, "B(100,0.1)")
+```
+
+## 8-2. 대수의 법칙
+
+```{r}
+illustrateLLN(Distr = Unif(), main = NULL, withCover = FALSE, m = 10, step = 2)
+```
+
+## 중심극한정리
+
+```{r}
+clt.examp(2)
+clt.examp(5)
+clt.examp(30)
+```
