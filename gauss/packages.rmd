@@ -1,7 +1,9 @@
 ```{r}
 packages <- c(
   "distrEx",
-  "mvtnorm"
+  "distrTeach",
+  "mvtnorm",
+  "TeachingDemos"
 )
 
 for (pkg in packages) {
