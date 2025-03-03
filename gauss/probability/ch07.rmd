@@ -1,0 +1,37 @@
+---
+title: 7. 다변량 확률분포
+---
+
+```{r}
+library(mvtnorm)
+```
+
+## 7-1. 이변량 정규분포의 그래프 작성
+
+```{r}
+x <- seq(0, 6, length = 51)
+y <- seq(-1, 11, length = 51)
+f <- matrix(0, nrow = length(x), ncol = length(y))
+m <- c(3, 5)
+s <- matrix(c(1, -1, -1, 4), nrow = 2, ncol = 2)
+
+# 결합확률밀도함수의 계산
+for (i in seq_along(x)) {
+  for (j in seq_along(y)) {
+    f[i, j] <- dmvnorm(c(x[i], y[j]), mean = m, sigma = s)
+  }
+}
+
+# 3차원 그림 그리기
+persp(x, y, f)
+```
+
+## 7-2. 다항분포의 확률계산과 난수 생성
+
+```{r}
+# 다항분포의 확률계산
+dmultinom(c(3, 5, 2), size = 10, prob = c(0.25, 0.5, 0.25))
+
+# 다항분포에서 난수 생성
+rmultinom(n = 5, size = 10, prob = c(0.25, 0.5, 0.25))
+```
