@@ -3,6 +3,7 @@ packages <- c(
   "distrEx",
   "distrTeach",
   "mvtnorm",
+  "LaplacesDemon",
   "TeachingDemos"
 )
 
