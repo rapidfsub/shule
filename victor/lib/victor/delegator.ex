@@ -20,7 +20,7 @@ defmodule Victor.Delegator do
 
   defmacro __using__(_opts) do
     quote do
-      import Victor.Mixin, only: [delegate_to: 2, delegate_to: 3]
+      import Victor.Delegator, only: [delegate_to: 2, delegate_to: 3]
     end
   end
 end
