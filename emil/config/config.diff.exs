@@ -25,7 +25,8 @@ config :spark,
         :relationships,
         :calculations,
         :aggregates,
-        :identities
+        :identities,
+        :state_machine
       ]
     ],
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
