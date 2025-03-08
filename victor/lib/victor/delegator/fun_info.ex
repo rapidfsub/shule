@@ -1,4 +1,4 @@
-defmodule Victor.Mixin.FunInfo do
+defmodule Victor.Delegator.FunInfo do
   @enforce_keys [:mod, :name, :arity, :defaults, :args, :doc]
   defstruct @enforce_keys
 
