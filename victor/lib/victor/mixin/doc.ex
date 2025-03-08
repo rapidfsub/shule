@@ -3,26 +3,33 @@ defmodule Victor.Mixin.FunInfo do
   defstruct @enforce_keys
 
   def new(mod, name, arity) do
-    case Code.fetch_docs(mod) do
-      {:docs_v1, _anot, _beam_language, _format, _module_doc, _meta, docs} ->
-        {:ok, doc_element} = get_doc_element(docs, name, arity)
-        defaults = get_defaults(doc_element)
-        args = list_args(doc_element)
-        doc = get_doc(doc_element)
+    with {:ok, docs} <- fetch_docs(mod),
+         {:ok, doc_element} <- fetch_doc_element(docs, name, arity) do
+      defaults = get_defaults(doc_element)
+      args = list_args(doc_element)
+      doc = get_doc(doc_element)
 
-        {:ok,
-         %__MODULE__{
-           mod: mod,
-           name: name,
-           arity: arity,
-           defaults: defaults,
-           args: args,
-           doc: doc
-         }}
+      info = %__MODULE__{
+        mod: mod,
+        name: name,
+        arity: arity,
+        defaults: defaults,
+        args: args,
+        doc: doc
+      }
+
+      {:ok, info}
     end
   end
 
-  defp get_doc_element(docs, name, arity) do
+  defp fetch_docs(mod) do
+    case Code.fetch_docs(mod) do
+      {:docs_v1, _anot, _beam_language, _format, _module_doc, _meta, docs} -> {:ok, docs}
+      {:error, _reason} -> {:error, :invalid}
+    end
+  end
+
+  defp fetch_doc_element(docs, name, arity) do
     Enum.find_value(docs, {:error, :not_found}, fn
       {{:function, ^name, ^arity}, _anot, _sigs, _doc_content, _meta} = element -> {:ok, element}
       _ -> nil
