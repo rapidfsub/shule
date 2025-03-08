@@ -1,78 +1,26 @@
 defmodule Victor.Delegator do
-  # TODO: spark 사용 시 동일 모듈 내 자동완성이 동작하지 않으므로 spark 없이 구현
+  defmacro delegate_to(mod, fname, opts \\ []) do
+    {mod, _bindings} = Code.eval_quoted(mod)
+    dname = Keyword.get(opts, :alias, fname)
+    arity_or_nil = Keyword.get(opts, :arity)
 
-  defmodule Extension do
-    defmodule Define do
-      @args [:name]
-      @enforce_keys @args ++ [:arity, :as]
-      defstruct @enforce_keys
+    for info <- __MODULE__.FunInfo.list_infos(mod, fname) do
+      opts = [to: info.mod, as: info.name]
 
-      def entity() do
-        %Spark.Dsl.Entity{
-          target: __MODULE__,
-          name: :define,
-          args: @args,
-          schema: [
-            name: [
-              type: :atom,
-              required: true
-            ],
-            arity: [
-              type: :integer
-            ],
-            as: [
-              type: :atom
-            ]
-          ]
-        }
+      for arity <- (info.arity - info.defaults)..info.arity//1, arity_or_nil in [nil, arity] do
+        args = Enum.take(info.args, arity)
+
+        quote do
+          @doc unquote(info.doc)
+          defdelegate unquote({dname, [], args}), unquote(opts)
+        end
       end
     end
-
-    defmodule DelegateTo do
-      @args [:target]
-      @enforce_keys @args ++ [:only, :except, :entities, :defs]
-      defstruct @enforce_keys
-
-      @f_or_fa {:or, [:atom, {:tuple, [:atom, :non_neg_integer]}]}
-
-      def entity() do
-        %Spark.Dsl.Entity{
-          target: __MODULE__,
-          name: :delegate_to,
-          args: @args,
-          schema: [
-            target: [
-              type: :atom,
-              required: true
-            ],
-            only: [
-              type: {:list, @f_or_fa}
-            ],
-            except: [
-              type: {:list, @f_or_fa},
-              default: []
-            ]
-          ],
-          entities: [
-            defs: [Define.entity()]
-          ]
-        }
-      end
-    end
-
-    @delegates %Spark.Dsl.Section{
-      name: :delegates,
-      entities: [DelegateTo.entity()],
-      top_level?: true
-    }
-
-    use Spark.Dsl.Extension,
-      sections: [@delegates],
-      transformers: [Victor.Delegator.Transformer]
   end
 
-  use Spark.Dsl,
-    default_extensions: [
-      extensions: [Extension]
-    ]
+  defmacro __using__(_opts) do
+    quote do
+      import Victor.Mixin, only: [delegate_to: 2, delegate_to: 3]
+    end
+  end
 end
