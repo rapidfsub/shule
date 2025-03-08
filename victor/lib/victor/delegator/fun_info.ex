@@ -17,7 +17,16 @@ defmodule Victor.Delegator.FunInfo do
         end
 
       {:error, _reason} ->
-        []
+        for {mod, name, arity} <- list_mfas(mod, name) do
+          %__MODULE__{
+            mod: mod,
+            name: name,
+            arity: arity,
+            defaults: 0,
+            args: list_dummy_args(arity),
+            doc: nil
+          }
+        end
     end
   end
 
@@ -49,6 +58,18 @@ defmodule Victor.Delegator.FunInfo do
       %{"en" => doc} -> doc
       :none -> nil
       :hidden -> nil
+    end
+  end
+
+  defp list_mfas(mod, name) do
+    for {^name, arity} <- mod.__info__(:functions) do
+      {mod, name, arity}
+    end
+  end
+
+  defp list_dummy_args(arity) do
+    for aty <- 1..arity//1 do
+      Macro.var(:"x#{aty}", nil)
     end
   end
 end
