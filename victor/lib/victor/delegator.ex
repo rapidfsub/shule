@@ -17,7 +17,6 @@ defmodule Victor.Delegator do
             end
           end,
           quote do
-            @doc unquote(info.doc)
             defdelegate unquote({dname, [], args}), unquote(opts)
           end
         ]
