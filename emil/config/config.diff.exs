@@ -1,6 +1,8 @@
 import Config
 
-config :emil, ash_domains: [Emil.Accounts]
+config :emil,
+  ash_domains: [Emil.Accounts],
+  ash_oban_domains: [Emil.Accounts]
 
 config :emil, Oban,
   engine: Oban.Engines.Basic,
