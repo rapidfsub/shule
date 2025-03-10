@@ -22,7 +22,8 @@ defmodule Emil.Application do
       # Start a worker by calling: Emil.Worker.start_link(arg)
       # {Emil.Worker, arg},
       # Start to serve requests, typically the last entry
-      EmilWeb.Endpoint
+      EmilWeb.Endpoint,
+      {AshAuthentication.Supervisor, [otp_app: :emil]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
