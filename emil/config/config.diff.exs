@@ -32,6 +32,7 @@ config :spark,
         :calculations,
         :aggregates,
         :identities,
+        :postgres,
         :state_machine
       ]
     ],
