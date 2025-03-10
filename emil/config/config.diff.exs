@@ -1,5 +1,7 @@
 import Config
 
+config :emil, ash_domains: []
+
 config :emil, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,

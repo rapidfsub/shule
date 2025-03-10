@@ -1,5 +1,7 @@
 import Config
 
+config :emil, ash_domains: []
+
 config :emil, Oban, testing: :manual
 
 config :ash,
