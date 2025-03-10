@@ -1,6 +1,8 @@
 import Config
 
-config :emil, ash_domains: [Emil.Accounts]
+config :emil,
+  ash_domains: [Emil.Accounts],
+  ash_oban_domains: [Emil.Accounts]
 
 config :emil, Oban,
   engine: Oban.Engines.Basic,
@@ -37,7 +39,8 @@ config :spark,
         :postgres,
         :state_machine,
         :authentication,
-        :tokens
+        :tokens,
+        :oban
       ]
     ],
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]

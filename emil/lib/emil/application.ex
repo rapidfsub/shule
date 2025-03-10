@@ -10,7 +10,7 @@ defmodule Emil.Application do
     children = [
       {Oban,
        AshOban.config(
-         Application.fetch_env!(:emil, :ash_domains),
+         Application.fetch_env!(:emil, :ash_oban_domains),
          Application.fetch_env!(:emil, Oban)
        )},
       EmilWeb.Telemetry,

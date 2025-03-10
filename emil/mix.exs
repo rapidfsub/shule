@@ -40,6 +40,7 @@ defmodule Emil.MixProject do
       {:ash_postgres, ">= 0.0.0"},
       {:ash_state_machine, ">= 0.0.0"},
       {:decimal, ">= 0.0.0"},
+      {:faker, ">= 0.0.0"},
       {:oban, ">= 0.0.0"},
       {:picosat_elixir, ">= 0.0.0"}
     ]
