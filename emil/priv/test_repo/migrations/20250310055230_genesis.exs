@@ -15,9 +15,16 @@ defmodule Emil.TestRepo.Migrations.Genesis do
       add :low, :decimal, null: false
       add :close, :decimal, null: false
     end
+
+    create table(:bot, primary_key: false) do
+      add :id, :bigserial, null: false, primary_key: true
+      add :name, :citext, null: false
+    end
   end
 
   def down do
+    drop table(:bot)
+
     drop table(:candle)
   end
 end
