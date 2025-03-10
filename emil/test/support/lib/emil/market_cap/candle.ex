@@ -1,10 +1,21 @@
 defmodule Emil.MarketCap.Candle do
   use Ash.Resource,
-    domain: Emil.MarketCap,
-    data_layer: AshPostgres.DataLayer
+    authorizers: [Ash.Policy.Authorizer],
+    data_layer: AshPostgres.DataLayer,
+    domain: Emil.MarketCap
 
   actions do
     defaults [:read, create: :*]
+  end
+
+  policies do
+    policy action_type(:create) do
+      authorize_if expr(^actor(:name) == "admin")
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
+    end
   end
 
   attributes do
