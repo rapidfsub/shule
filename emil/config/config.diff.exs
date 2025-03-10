@@ -39,7 +39,8 @@ config :spark,
         :postgres,
         :state_machine,
         :authentication,
-        :tokens
+        :tokens,
+        :oban
       ]
     ],
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
