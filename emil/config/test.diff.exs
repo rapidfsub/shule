@@ -1,6 +1,8 @@
 import Config
 
-config :emil, ash_domains: []
+config :emil,
+  ash_domains: [Emil.Accounts],
+  token_signing_secret: "e4Afk2zeUOWUmKNvjGnCE+KQDsaRMAvs"
 
 config :emil, Oban, testing: :manual
 
