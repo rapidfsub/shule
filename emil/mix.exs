@@ -35,8 +35,10 @@ defmodule Emil.MixProject do
   defp deps do
     [
       {:ash, ">= 0.0.0"},
+      {:ash_oban, ">= 0.0.0"},
       {:ash_state_machine, ">= 0.0.0"},
-      {:decimal, ">= 0.0.0"}
+      {:decimal, ">= 0.0.0"},
+      {:oban, ">= 0.0.0"}
     ]
   end
 
