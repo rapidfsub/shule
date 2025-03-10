@@ -10,7 +10,7 @@ defmodule Emil.MixProject do
       start_permanent: Mix.env() == :prod,
       # consolidate_protocols: Mix.env() != :dev,
       consolidate_protocols: Mix.env() not in [:dev, :test],
-      aliases: aliases(),
+      aliases: List.flatten([phx_aliases(), aliases()]) |> Keyword.new(),
       deps: List.flatten([deps(), dev_deps(), phx_deps()])
     ]
   end
@@ -35,8 +35,11 @@ defmodule Emil.MixProject do
   defp deps do
     [
       {:ash, ">= 0.0.0"},
+      {:ash_oban, ">= 0.0.0"},
+      {:ash_postgres, ">= 0.0.0"},
       {:ash_state_machine, ">= 0.0.0"},
-      {:decimal, ">= 0.0.0"}
+      {:decimal, ">= 0.0.0"},
+      {:oban, ">= 0.0.0"}
     ]
   end
 
@@ -85,6 +88,13 @@ defmodule Emil.MixProject do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
+    [
+      setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "run priv/repo/seeds.exs"],
+      test: ["ash.setup --quiet", "test"]
+    ]
+  end
+
+  defp phx_aliases() do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],

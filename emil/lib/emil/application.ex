@@ -8,6 +8,11 @@ defmodule Emil.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Oban,
+       AshOban.config(
+         Application.fetch_env!(:emil, :ash_domains),
+         Application.fetch_env!(:emil, Oban)
+       )},
       EmilWeb.Telemetry,
       Emil.Repo,
       {DNSCluster, query: Application.get_env(:emil, :dns_cluster_query) || :ignore},

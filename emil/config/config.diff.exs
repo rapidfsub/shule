@@ -1,5 +1,13 @@
 import Config
 
+config :emil, ash_domains: []
+
+config :emil, Oban,
+  engine: Oban.Engines.Basic,
+  notifier: Oban.Notifiers.Postgres,
+  queues: [default: 10],
+  repo: Emil.Repo
+
 config :ash,
   allow_forbidden_field_for_relationships_by_default?: true,
   include_embedded_source_by_default?: false,
@@ -26,6 +34,7 @@ config :spark,
         :calculations,
         :aggregates,
         :identities,
+        :postgres,
         :state_machine
       ]
     ],
