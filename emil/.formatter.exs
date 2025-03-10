@@ -2,6 +2,7 @@
   import_deps: [
     :ash,
     :ash_oban,
+    :ash_postgres,
     :ash_state_machine,
     :oban,
     # default
