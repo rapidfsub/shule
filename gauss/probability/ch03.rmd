@@ -1,0 +1,36 @@
+---
+title: 03. 조건부 확률
+---
+
+```{r}
+library(LaplacesDemon)
+```
+
+## 3-1. 베이즈 정리
+
+```{r}
+# 질병 확률: 0.05
+do <- 0.05
+dx <- 1 - do
+
+# 질병일 때 양성 확률: 0.98
+to_do <- 0.98
+tx_do <- 1 - to_do
+
+# 비질병일 때 음성확률: 0.9
+tx_dx <- 0.9
+to_dx <- 1 - tx_dx
+
+# 확률 정리
+dist_d <- c(do, dx)
+dist_to_d <- c(to_do, to_dx)
+
+# 양성일 때 질병 확률
+print(BayesTheorem(dist_d, dist_to_d)[1])
+print(to_do * do / (to_do * do + to_dx * dx))
+
+# 음성일 때 질병 아닐 확률
+dist_tx_d <- c(tx_do, tx_dx)
+print(BayesTheorem(dist_d, dist_tx_d)[2])
+print(tx_dx * dx / (tx_dx * dx + tx_do * do))
+```

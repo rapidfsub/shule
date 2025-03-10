@@ -1,5 +1,5 @@
 ---
-title: 5. 이산형 확률분포
+title: 05. 이산형 확률분포
 ---
 
 ```{r, message=FALSE}
