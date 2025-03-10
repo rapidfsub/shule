@@ -1,4 +1,4 @@
-defmodule Emil.Repo do
+defmodule Emil.TestRepo do
   use AshPostgres.Repo,
     otp_app: :emil
 

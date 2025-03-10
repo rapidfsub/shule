@@ -1,7 +1,11 @@
 [
   import_deps: [
     :ash,
+    :ash_authentication,
+    :ash_oban,
+    :ash_postgres,
     :ash_state_machine,
+    :oban,
     # default
     :ecto,
     :ecto_sql,
