@@ -9,7 +9,11 @@ config :emil, Emil.TestRepo,
   pool_size: System.schedulers_online() * 2
 
 config :emil,
-  ash_domains: [Emil.Accounts, Emil.TestDomain],
+  ash_domains: [
+    Emil.Accounts,
+    Emil.MarketCap,
+    Emil.TestDomain
+  ],
   ecto_repos: [Emil.Repo, Emil.TestRepo],
   token_signing_secret: "e4Afk2zeUOWUmKNvjGnCE+KQDsaRMAvs"
 
