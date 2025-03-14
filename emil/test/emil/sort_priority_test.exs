@@ -3,7 +3,7 @@ use Emil.TestPrelude
 
 defmodule ThisTest.Parent do
   use Ash.Resource,
-    domain: Emil.TestDomain,
+    domain: TestDomain,
     data_layer: Ash.DataLayer.Ets
 
   actions do
@@ -34,7 +34,7 @@ end
 
 defmodule ThisTest.ActionSort do
   use Ash.Resource,
-    domain: Emil.TestDomain,
+    domain: TestDomain,
     data_layer: Ash.DataLayer.Ets,
     primary_read_warning?: false
 
@@ -60,7 +60,7 @@ end
 
 defmodule ThisTest.PrepareSort do
   use Ash.Resource,
-    domain: Emil.TestDomain,
+    domain: TestDomain,
     data_layer: Ash.DataLayer.Ets
 
   actions do

@@ -3,7 +3,7 @@ use Emil.TestPrelude
 
 defmodule ThisTest.Post do
   use Ash.Resource,
-    domain: Emil.TestDomain,
+    domain: TestDomain,
     data_layer: Ash.DataLayer.Ets
 
   actions do
@@ -41,7 +41,7 @@ end
 
 defmodule ThisTest.Comment do
   use Ash.Resource,
-    domain: Emil.TestDomain,
+    domain: TestDomain,
     data_layer: Ash.DataLayer.Ets
 
   actions do
