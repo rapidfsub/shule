@@ -11,7 +11,7 @@ defmodule Emil.MixProject do
       # consolidate_protocols: Mix.env() != :dev,
       consolidate_protocols: Mix.env() not in [:dev, :test],
       aliases: List.flatten([phx_aliases(), aliases()]) |> Keyword.new(),
-      deps: List.flatten([deps(), dev_deps(), phx_deps()])
+      deps: List.flatten([deps(), local_deps(), dev_deps(), phx_deps()])
     ]
   end
 
@@ -43,6 +43,12 @@ defmodule Emil.MixProject do
       {:faker, ">= 0.0.0"},
       {:oban, ">= 0.0.0"},
       {:picosat_elixir, ">= 0.0.0"}
+    ]
+  end
+
+  defp local_deps() do
+    [
+      {:mixin, path: "../mixin"}
     ]
   end
 
