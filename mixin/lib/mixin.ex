@@ -1,18 +1,37 @@
 defmodule Mixin do
-  @moduledoc """
-  Documentation for `Mixin`.
-  """
+  defmacro delegate_to(mod, fname \\ nil, opts \\ []) do
+    {mod, _bindings} = Code.eval_quoted(mod)
+    arity_or_nil = Keyword.get(opts, :arity)
 
-  @doc """
-  Hello world.
+    for info <- __MODULE__.FunInfo.list_infos(mod, fname) do
+      dname = Keyword.get(opts, :alias, info.name)
+      opts = [to: info.mod, as: info.name]
 
-  ## Examples
+      for arity <- (info.arity - info.defaults)..info.arity//1, arity_or_nil in [nil, arity] do
+        args = Enum.take(info.args, arity)
 
-      iex> Mixin.hello()
-      :world
+        [
+          quote do
+            if Module.defines?(__MODULE__, unquote({dname, arity})) do
+              raise "#{unquote(inspect({dname, arity}))} already defined"
+            end
+          end,
+          if info.doc do
+            quote do
+              @doc unquote(info.doc)
+            end
+          end,
+          quote do
+            defdelegate unquote({dname, [], args}), unquote(opts)
+          end
+        ]
+      end
+    end
+  end
 
-  """
-  def hello do
-    :world
+  defmacro __using__(_opts) do
+    quote do
+      import Mixin, only: [delegate_to: 1, delegate_to: 2, delegate_to: 3]
+    end
   end
 end
