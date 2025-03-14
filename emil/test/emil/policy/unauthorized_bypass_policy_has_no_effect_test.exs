@@ -1,4 +1,5 @@
 alias Emil.Policy.UnauthorizedBypassPolicyHasNoEffectTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -30,10 +31,10 @@ defmodule ThisTest do
 
   test "an unauthorized bypass policy has no effect" do
     params = %{d1: 1}
-    assert {:error, _} = Ash.Changeset.for_create(ThisTest.Obj, :create, params) |> Ash.create()
+    assert {:error, _} = Changeset.for_create(ThisTest.Obj, :create, params) |> Ash.create()
     opts = [actor: %{is_admin: true, is_staff: false}]
-    assert Ash.Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create!()
+    assert Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create!()
     opts = [actor: %{is_admin: false, is_staff: true}]
-    assert Ash.Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create!()
+    assert Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create!()
   end
 end

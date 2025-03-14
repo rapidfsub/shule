@@ -1,4 +1,5 @@
 alias Emil.AshStateMachine.InvalidTransitionTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -31,8 +32,8 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "returns an error when attempting an invalid transition" do
-    assert obj = Ash.Changeset.for_create(ThisTest.Obj, :create) |> Ash.create!()
-    assert obj = Ash.Changeset.for_update(obj, :cancel) |> Ash.update!()
-    assert {:error, _reason} = Ash.Changeset.for_update(obj, :cancel) |> Ash.update()
+    assert obj = Changeset.for_create(ThisTest.Obj, :create) |> Ash.create!()
+    assert obj = Changeset.for_update(obj, :cancel) |> Ash.update!()
+    assert {:error, _reason} = Changeset.for_update(obj, :cancel) |> Ash.update()
   end
 end

@@ -1,4 +1,5 @@
 alias Emil.AshStateMachine.OriginStateValidationTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -39,13 +40,13 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "origin state is not checked when transition_state change is not executed" do
-    obj = Ash.Changeset.for_create(ThisTest.Obj, :create) |> Ash.create!()
+    obj = Changeset.for_create(ThisTest.Obj, :create) |> Ash.create!()
     params = %{is_admin: true}
-    assert obj = Ash.Changeset.for_update(obj, :flawed_cancel, params) |> Ash.update!()
+    assert obj = Changeset.for_update(obj, :flawed_cancel, params) |> Ash.update!()
     assert obj.state == :canceled
 
     params = %{is_admin: false}
-    assert Ash.Changeset.for_update(obj, :flawed_cancel, params) |> Ash.update!()
-    assert {:error, _} = Ash.Changeset.for_update(obj, :cancel, params) |> Ash.update()
+    assert Changeset.for_update(obj, :flawed_cancel, params) |> Ash.update!()
+    assert {:error, _} = Changeset.for_update(obj, :cancel, params) |> Ash.update()
   end
 end

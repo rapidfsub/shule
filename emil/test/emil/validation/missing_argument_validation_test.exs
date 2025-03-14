@@ -1,4 +1,5 @@
 alias Emil.Validation.MissingArgumentValidationTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -10,7 +11,7 @@ defmodule ThisTest.Obj do
 
   changes do
     change fn changeset, _context ->
-      Ash.Changeset.set_argument(changeset, :hello, "world")
+      Changeset.set_argument(changeset, :hello, "world")
     end
   end
 
@@ -27,8 +28,8 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "validation fails when argument is missing" do
-    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create, %{})
-    refute Ash.Changeset.get_argument(changeset, :hello)
+    changeset = Changeset.for_create(ThisTest.Obj, :create, %{})
+    refute Changeset.get_argument(changeset, :hello)
     assert {:error, _error} = Ash.create(changeset)
   end
 end

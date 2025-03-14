@@ -1,4 +1,5 @@
 alias Emil.Policy.UnauthorizedPolicyPreventsSubsequentPoliciesTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -30,18 +31,18 @@ defmodule ThisTest do
 
   test "an unauthorized policy prevents subsequent policies from being evaluated" do
     params = %{d1: 1}
-    assert {:error, _} = Ash.Changeset.for_create(ThisTest.Obj, :create, params) |> Ash.create()
+    assert {:error, _} = Changeset.for_create(ThisTest.Obj, :create, params) |> Ash.create()
     opts = [actor: %{}]
 
     assert {:error, _} =
-             Ash.Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create()
+             Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create()
 
     opts = [actor: %{is_admin: false}]
 
     assert {:error, _} =
-             Ash.Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create()
+             Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create()
 
     opts = [actor: %{is_admin: true}]
-    assert Ash.Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create!()
+    assert Changeset.for_create(ThisTest.Obj, :create, params, opts) |> Ash.create!()
   end
 end

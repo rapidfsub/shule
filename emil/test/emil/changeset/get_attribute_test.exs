@@ -1,4 +1,5 @@
 alias Emil.Changeset.GetAttributeTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -18,22 +19,22 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "get_attribute returns attribute or data" do
-    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create)
-    assert Ash.Changeset.get_attribute(changeset, :s1) == nil
-    assert Ash.Changeset.get_attribute(changeset, :s2) == nil
+    changeset = Changeset.for_create(ThisTest.Obj, :create)
+    assert Changeset.get_attribute(changeset, :s1) == nil
+    assert Changeset.get_attribute(changeset, :s2) == nil
 
-    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create, %{s1: "create"})
-    assert Ash.Changeset.get_attribute(changeset, :s1) == "create"
+    changeset = Changeset.for_create(ThisTest.Obj, :create, %{s1: "create"})
+    assert Changeset.get_attribute(changeset, :s1) == "create"
 
     obj = Ash.create!(changeset)
-    changeset = Ash.Changeset.for_update(obj, :update)
-    assert Ash.Changeset.get_attribute(changeset, :s1) == "create"
-    assert Ash.Changeset.get_attribute(changeset, :s2) == nil
+    changeset = Changeset.for_update(obj, :update)
+    assert Changeset.get_attribute(changeset, :s1) == "create"
+    assert Changeset.get_attribute(changeset, :s2) == nil
 
-    changeset = Ash.Changeset.for_update(obj, :update, %{s1: nil})
-    assert Ash.Changeset.get_attribute(changeset, :s1) == nil
+    changeset = Changeset.for_update(obj, :update, %{s1: nil})
+    assert Changeset.get_attribute(changeset, :s1) == nil
 
-    changeset = Ash.Changeset.for_update(obj, :update, %{s1: "update"})
-    assert Ash.Changeset.get_attribute(changeset, :s1) == "update"
+    changeset = Changeset.for_update(obj, :update, %{s1: "update"})
+    assert Changeset.get_attribute(changeset, :s1) == "update"
   end
 end
