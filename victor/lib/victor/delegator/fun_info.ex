@@ -32,7 +32,7 @@ defmodule Victor.Delegator.FunInfo do
 
   defp list_doc_elements(docs, name) do
     for {{:function, f, _a}, _anot, _sigs, _doc_content, _meta} = element <- docs,
-        name in [nil, f] do
+        name in [nil, f] and not String.starts_with?(to_string(f), "__") do
       element
     end
   end
