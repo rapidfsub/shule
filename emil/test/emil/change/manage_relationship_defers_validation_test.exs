@@ -3,7 +3,7 @@ use Emil.TestPrelude
 
 defmodule ThisTest.TodoList do
   use Ash.Resource,
-    domain: Emil.TestDomain
+    domain: TestDomain
 
   actions do
     defaults [:read, create: :*]
@@ -27,7 +27,7 @@ end
 
 defmodule ThisTest.Task do
   use Ash.Resource,
-    domain: Emil.TestDomain
+    domain: TestDomain
 
   actions do
     defaults [:read, create: :*]

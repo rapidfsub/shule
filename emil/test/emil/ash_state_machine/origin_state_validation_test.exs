@@ -3,7 +3,7 @@ use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
-    domain: Emil.TestDomain,
+    domain: TestDomain,
     extensions: [AshStateMachine]
 
   actions do

@@ -4,7 +4,7 @@ use Emil.TestPrelude
 defmodule ThisTest.Obj do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
-    domain: Emil.TestDomain
+    domain: TestDomain
 
   actions do
     defaults [:read, create: :*]

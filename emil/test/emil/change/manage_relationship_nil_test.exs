@@ -3,7 +3,7 @@ use Emil.TestPrelude
 
 defmodule ThisTest.Post do
   use Ash.Resource,
-    domain: Emil.TestDomain
+    domain: TestDomain
 
   actions do
     defaults [:read, create: :*]
@@ -31,7 +31,7 @@ end
 
 defmodule ThisTest.Comment do
   use Ash.Resource,
-    domain: Emil.TestDomain
+    domain: TestDomain
 
   actions do
     defaults [:read, create: :*]
