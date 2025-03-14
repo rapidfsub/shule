@@ -1,4 +1,5 @@
 alias Emil.AshStateMachine.OptionalTransitionTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -32,13 +33,13 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "transition is not required" do
-    assert obj = Ash.Changeset.for_create(ThisTest.Obj, :create) |> Ash.create!()
+    assert obj = Changeset.for_create(ThisTest.Obj, :create) |> Ash.create!()
 
-    assert obj = Ash.Changeset.for_update(obj, :cancel) |> Ash.update!()
+    assert obj = Changeset.for_update(obj, :cancel) |> Ash.update!()
     assert obj.state == :created
 
     params = %{cancel_date: ~D[2000-01-01]}
-    assert obj = Ash.Changeset.for_update(obj, :cancel, params) |> Ash.update!()
+    assert obj = Changeset.for_update(obj, :cancel, params) |> Ash.update!()
     assert obj.state == :canceled
   end
 end

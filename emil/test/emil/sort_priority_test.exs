@@ -1,4 +1,5 @@
 alias Emil.SortPriorityTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Parent do
   use Ash.Resource,
@@ -88,16 +89,16 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   setup_all do
-    parent = Ash.Changeset.for_create(ThisTest.Parent, :create) |> Ash.create!()
+    parent = Changeset.for_create(ThisTest.Parent, :create) |> Ash.create!()
 
     for d1 <- 1..3 do
       params = %{action_sort: %{d1: d1}}
-      Ash.Changeset.for_update(parent, :append_action_sort, params) |> Ash.update!()
+      Changeset.for_update(parent, :append_action_sort, params) |> Ash.update!()
     end
 
     for d1 <- 1..3 do
       params = %{prepare_sort: %{d1: d1}}
-      Ash.Changeset.for_update(parent, :append_prepare_sort, params) |> Ash.update!()
+      Changeset.for_update(parent, :append_prepare_sort, params) |> Ash.update!()
     end
 
     %{parent: parent}

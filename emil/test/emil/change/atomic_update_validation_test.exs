@@ -1,4 +1,5 @@
 alias Emil.Change.AtomicUpdateValidationTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -21,7 +22,7 @@ defmodule ThisTest.Obj do
       change atomic_update(:balance, expr(balance + ^arg(:offset)))
 
       validate fn changeset, _context ->
-        balance = Ash.Changeset.get_attribute(changeset, :balance)
+        balance = Changeset.get_attribute(changeset, :balance)
 
         if balance && Decimal.gte?(balance, 0) do
           :ok
@@ -42,26 +43,26 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "prevents atomic_update with atomic validation" do
-    obj = Ash.Changeset.for_create(ThisTest.Obj, :create, %{balance: 100}) |> Ash.create!()
+    obj = Changeset.for_create(ThisTest.Obj, :create, %{balance: 100}) |> Ash.create!()
     assert to_string(obj.balance) == "100"
 
-    changeset = Ash.Changeset.for_update(obj, :add_atomic_balance, %{offset: -10})
+    changeset = Changeset.for_update(obj, :add_atomic_balance, %{offset: -10})
     obj = Ash.update!(changeset)
     assert to_string(obj.balance) == "90"
 
-    changeset = Ash.Changeset.for_update(obj, :add_atomic_balance, %{offset: -100})
+    changeset = Changeset.for_update(obj, :add_atomic_balance, %{offset: -100})
     assert {:error, _reason} = Ash.update(changeset)
   end
 
   test "does not prevent atomic_update with non atomic validation" do
-    obj = Ash.Changeset.for_create(ThisTest.Obj, :create, %{balance: 100}) |> Ash.create!()
+    obj = Changeset.for_create(ThisTest.Obj, :create, %{balance: 100}) |> Ash.create!()
     assert to_string(obj.balance) == "100"
 
-    changeset = Ash.Changeset.for_update(obj, :add_balance, %{offset: -10})
+    changeset = Changeset.for_update(obj, :add_balance, %{offset: -10})
     obj = Ash.update!(changeset)
     assert to_string(obj.balance) == "90"
 
-    changeset = Ash.Changeset.for_update(obj, :add_balance, %{offset: -100})
+    changeset = Changeset.for_update(obj, :add_balance, %{offset: -100})
     obj = Ash.update!(changeset)
     assert to_string(obj.balance) == "-10"
   end

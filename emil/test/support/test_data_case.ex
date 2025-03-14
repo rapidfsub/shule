@@ -24,6 +24,9 @@ defmodule Emil.TestDataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Emil.DataCase
+
+      # added
+      use Emil.TestPrelude
     end
   end
 

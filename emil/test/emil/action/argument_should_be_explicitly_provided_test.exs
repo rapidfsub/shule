@@ -1,4 +1,5 @@
 alias Emil.Action.ArgumentShouldBeExplicitlyProvidedTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -11,7 +12,7 @@ defmodule ThisTest.Obj do
       change set_attribute(:s1, "in")
 
       change fn changeset, _context ->
-        Ash.Changeset.set_argument(changeset, :s2, "in")
+        Changeset.set_argument(changeset, :s2, "in")
       end
     end
   end
@@ -29,11 +30,11 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "argument should be passed explicitly" do
-    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create)
+    changeset = Changeset.for_create(ThisTest.Obj, :create)
     assert to_string(changeset.arguments.s2) == "in"
     assert {:error, _error} = Ash.create(changeset)
 
-    changeset = Ash.Changeset.for_create(ThisTest.Obj, :create, %{s2: "out"})
+    changeset = Changeset.for_create(ThisTest.Obj, :create, %{s2: "out"})
     assert to_string(changeset.arguments.s2) == "in"
     assert Ash.create!(changeset)
   end

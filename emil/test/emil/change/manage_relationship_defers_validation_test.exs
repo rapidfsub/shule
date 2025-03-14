@@ -1,4 +1,5 @@
 alias Emil.Change.ManageRelationshipDefersValidationTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.TodoList do
   use Ash.Resource,
@@ -54,7 +55,7 @@ defmodule ThisTest do
 
   test "manage_relationship defers has_many validation" do
     params = %{title: "todo list", tasks: [%{}]}
-    changeset = Ash.Changeset.for_create(ThisTest.TodoList, :create_with_tasks, params)
+    changeset = Changeset.for_create(ThisTest.TodoList, :create_with_tasks, params)
 
     assert Ash.Changeset.is_valid(changeset)
     assert {:error, _error} = Ash.create(changeset)
@@ -62,7 +63,7 @@ defmodule ThisTest do
 
   test "manage_relationship defers belongs_to validation" do
     params = %{title: "task", todo_list: %{}}
-    changeset = Ash.Changeset.for_create(ThisTest.Task, :create_with_todo_list, params)
+    changeset = Changeset.for_create(ThisTest.Task, :create_with_todo_list, params)
 
     assert Ash.Changeset.is_valid(changeset)
     assert {:error, _error} = Ash.create(changeset)

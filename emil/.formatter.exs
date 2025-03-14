@@ -6,6 +6,7 @@
     :ash_postgres,
     :ash_state_machine,
     :oban,
+    :mixin,
     # default
     :ecto,
     :ecto_sql,
