@@ -1,12 +1,13 @@
 alias Emil.Action.ManualCreateTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.ManualCreate do
   use Ash.Resource.ManualCreate
 
   @impl Ash.Resource.ManualCreate
   def create(changeset, _opts, _context) do
-    s1 = Ash.Changeset.get_attribute(changeset, :s1)
-    Ash.Changeset.for_create(ThisTest.Obj, :create, %{s1: s1}) |> Ash.create()
+    s1 = Changeset.get_attribute(changeset, :s1)
+    Changeset.for_create(ThisTest.Obj, :create, %{s1: s1}) |> Ash.create()
   end
 end
 
@@ -33,7 +34,7 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "manual create action applies defined changes" do
-    assert obj = Ash.Changeset.for_create(ThisTest.Obj, :manual_create) |> Ash.create!()
+    assert obj = Changeset.for_create(ThisTest.Obj, :manual_create) |> Ash.create!()
     assert to_string(obj.s1) == "hello"
   end
 end

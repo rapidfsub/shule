@@ -1,4 +1,5 @@
 alias Emil.Relationship.NoAttributesTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Post do
   use Ash.Resource,
@@ -85,17 +86,17 @@ defmodule ThisTest do
 
   setup_all %{} do
     params = %{content: "post"}
-    assert post = Ash.Changeset.for_create(ThisTest.Post, :create, params) |> Ash.create!()
+    assert post = Changeset.for_create(ThisTest.Post, :create, params) |> Ash.create!()
 
     params = %{comment: %{content: "comment"}}
-    assert post = Ash.Changeset.for_update(post, :append_comment, params) |> Ash.update!()
-    assert post = Ash.Changeset.for_update(post, :append_comment, params) |> Ash.update!()
-    assert post = Ash.Changeset.for_update(post, :append_comment, params) |> Ash.update!()
+    assert post = Changeset.for_update(post, :append_comment, params) |> Ash.update!()
+    assert post = Changeset.for_update(post, :append_comment, params) |> Ash.update!()
+    assert post = Changeset.for_update(post, :append_comment, params) |> Ash.update!()
     [comment | _] = post.comments
 
     params = %{reply: %{content: "reply"}}
-    assert comment = Ash.Changeset.for_update(comment, :append_reply, params) |> Ash.update!()
-    assert comment = Ash.Changeset.for_update(comment, :append_reply, params) |> Ash.update!()
+    assert comment = Changeset.for_update(comment, :append_reply, params) |> Ash.update!()
+    assert comment = Changeset.for_update(comment, :append_reply, params) |> Ash.update!()
     [reply | _] = comment.replies
 
     %{post: post, comment: comment, reply: reply}

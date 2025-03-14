@@ -1,4 +1,5 @@
 alias Emil.Calculation.NilPropagationTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -23,9 +24,9 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "calculation returns nil if any operand is nil" do
-    obj = Ash.Changeset.for_create(ThisTest.Obj, :create, %{d1: 1, d2: 2}) |> Ash.create!()
+    obj = Changeset.for_create(ThisTest.Obj, :create, %{d1: 1, d2: 2}) |> Ash.create!()
     assert Ash.load!(obj, [:sum]).sum |> to_string() == "3"
-    obj = Ash.Changeset.for_create(ThisTest.Obj, :create, %{d1: 1}) |> Ash.create!()
+    obj = Changeset.for_create(ThisTest.Obj, :create, %{d1: 1}) |> Ash.create!()
     assert Ash.load!(obj, [:sum]).sum == nil
   end
 end

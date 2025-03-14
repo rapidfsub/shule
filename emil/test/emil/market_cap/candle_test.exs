@@ -3,7 +3,7 @@ defmodule Emil.MarketCap.CandleTest do
 
   test "create" do
     params = %{name: "admin"}
-    assert bot = Ash.Changeset.for_create(Emil.MarketCap.Bot, :create, params) |> Ash.create!()
+    assert bot = Changeset.for_create(Emil.MarketCap.Bot, :create, params) |> Ash.create!()
 
     params = %{
       open: Faker.Commerce.price(),
@@ -12,7 +12,7 @@ defmodule Emil.MarketCap.CandleTest do
       close: Faker.Commerce.price()
     }
 
-    assert Ash.Changeset.for_create(Emil.MarketCap.Candle, :create, params, actor: bot)
+    assert Changeset.for_create(Emil.MarketCap.Candle, :create, params, actor: bot)
            |> Ash.create!()
   end
 end

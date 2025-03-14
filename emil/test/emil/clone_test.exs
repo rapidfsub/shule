@@ -1,4 +1,5 @@
 alias Emil.CloneTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
@@ -28,21 +29,21 @@ defmodule ThisTest do
   use ExUnit.Case, async: true
 
   test "can easily clone an object using skip_unknown_inputs option" do
-    assert obj1 = Ash.Changeset.for_create(ThisTest.Obj, :create, %{d1: 0.1}) |> Ash.create!()
+    assert obj1 = Changeset.for_create(ThisTest.Obj, :create, %{d1: 0.1}) |> Ash.create!()
 
     # struct is not enumerable
     assert_raise Ash.Error.Unknown, fn ->
-      Ash.Changeset.for_create(ThisTest.Obj, :clone, obj1) |> Ash.create()
+      Changeset.for_create(ThisTest.Obj, :clone, obj1) |> Ash.create()
     end
 
     params = Map.from_struct(obj1)
 
     # id should be removed
     assert_raise Ash.Error.Invalid, fn ->
-      Ash.Changeset.for_create(ThisTest.Obj, :clone, params) |> Ash.create!()
+      Changeset.for_create(ThisTest.Obj, :clone, params) |> Ash.create!()
     end
 
-    assert obj2 = Ash.Changeset.for_create(ThisTest.Obj, :easy_clone, params) |> Ash.create!()
+    assert obj2 = Changeset.for_create(ThisTest.Obj, :easy_clone, params) |> Ash.create!()
     assert obj1.id != obj2.id
   end
 end

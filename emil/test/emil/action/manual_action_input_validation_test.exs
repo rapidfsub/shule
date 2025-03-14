@@ -1,13 +1,14 @@
 alias Emil.Action.ManualActionInputValidationTest, as: ThisTest
+use Emil.TestPrelude
 
 defmodule ThisTest.ManualCreate do
   use Ash.Resource.ManualCreate
 
   @impl Ash.Resource.ManualCreate
   def create(changeset, _opts, _context) do
-    %{} = d1 = Ash.Changeset.get_attribute(changeset, :d1)
-    %{} = _d2 = Ash.Changeset.get_argument(changeset, :d2)
-    Ash.Changeset.for_create(ThisTest.Obj, :create, %{d1: d1}) |> Ash.create()
+    %{} = d1 = Changeset.get_attribute(changeset, :d1)
+    %{} = _d2 = Changeset.get_argument(changeset, :d2)
+    Changeset.for_create(ThisTest.Obj, :create, %{d1: d1}) |> Ash.create()
   end
 end
 
@@ -36,15 +37,15 @@ defmodule ThisTest do
 
   test "does not execute manual action if input validation fails" do
     assert {:error, _reason} =
-             Ash.Changeset.for_create(ThisTest.Obj, :manual_create) |> Ash.create()
+             Changeset.for_create(ThisTest.Obj, :manual_create) |> Ash.create()
 
     assert {:error, _reason} =
-             Ash.Changeset.for_create(ThisTest.Obj, :manual_create, %{d2: 1}) |> Ash.create()
+             Changeset.for_create(ThisTest.Obj, :manual_create, %{d2: 1}) |> Ash.create()
 
     assert {:error, _reason} =
-             Ash.Changeset.for_create(ThisTest.Obj, :manual_create, %{d1: 1}) |> Ash.create()
+             Changeset.for_create(ThisTest.Obj, :manual_create, %{d1: 1}) |> Ash.create()
 
-    assert Ash.Changeset.for_create(ThisTest.Obj, :manual_create, %{d1: 1, d2: 1})
+    assert Changeset.for_create(ThisTest.Obj, :manual_create, %{d1: 1, d2: 1})
            |> Ash.create!()
   end
 end
