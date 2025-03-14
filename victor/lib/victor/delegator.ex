@@ -11,6 +11,11 @@ defmodule Victor.Delegator do
         args = Enum.take(info.args, arity)
 
         [
+          quote do
+            if Module.defines?(__MODULE__, unquote({dname, arity})) do
+              raise "#{unquote(inspect({dname, arity}))} already defined"
+            end
+          end,
           if info.doc do
             quote do
               @doc unquote(info.doc)
