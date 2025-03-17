@@ -13,7 +13,7 @@ end
 
 defmodule ThisTest.Obj do
   use Ash.Resource,
-    domain: Emil.TestDomain
+    domain: TestDomain
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
