@@ -135,7 +135,6 @@ defmodule ThisTest do
     assert {:ok, false} = Ash.can({post, :update_unless_invalid_comment}, nil)
   end
 
-  @tag :skip
   test "policy can check inline exist aggregation", %{post: post} do
     params = %{comment: %{content: "valid"}}
     post = Changeset.for_update(post, :append_comment, params) |> Ash.update!()
@@ -147,7 +146,6 @@ defmodule ThisTest do
     post = Changeset.for_update(post, :append_comment, params) |> Ash.update!()
 
     post = Ash.get!(ThisTest.Post, post.id)
-    # bug
     assert {:ok, false} = Ash.can({post, :update_unless_invalid_comment_inline}, nil)
   end
 end
