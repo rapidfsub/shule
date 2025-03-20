@@ -1,5 +1,5 @@
 defmodule EmilWeb.Form do
   use Mixin
 
-  delegate_to AshPhoenix.Form
+  mixin AshPhoenix.Form, except: [:errors_for]
 end

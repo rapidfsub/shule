@@ -1,5 +1,5 @@
 defmodule Emil.Changeset do
   use Mixin
 
-  delegate_to Ash.Changeset
+  mixin Ash.Changeset
 end
