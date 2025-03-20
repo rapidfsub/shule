@@ -1,5 +1,5 @@
 # Used by "mix format"
-locals_without_parens = [delegate_to: 1, delegate_to: 2, delegate_to: 3]
+locals_without_parens = [delegate_to: :*, mixin: :*]
 
 [
   inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"],
