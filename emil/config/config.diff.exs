@@ -12,10 +12,11 @@ config :emil, Oban,
 
 config :ash,
   allow_forbidden_field_for_relationships_by_default?: true,
-  include_embedded_source_by_default?: false,
-  show_keysets_for_all_actions?: false,
   default_page_type: :keyset,
-  policies: [no_filter_static_forbidden_reads?: false]
+  include_embedded_source_by_default?: false,
+  keep_read_action_loads_when_loading?: false,
+  policies: [no_filter_static_forbidden_reads?: false],
+  show_keysets_for_all_actions?: false
 
 config :spark,
   formatter: [

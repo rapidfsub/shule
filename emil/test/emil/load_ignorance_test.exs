@@ -61,7 +61,6 @@ end
 defmodule ThisTest do
   use ExUnit.Case, async: true
 
-  @tag :skip
   test "The Ash.load function ignores global and action-specific loads" do
     params = %{content: "post"}
     post = Changeset.for_create(ThisTest.Post, :create, params) |> Ash.create!()
