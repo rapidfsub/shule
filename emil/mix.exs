@@ -37,6 +37,7 @@ defmodule Emil.MixProject do
       {:ash, ">= 0.0.0"},
       {:ash_authentication, ">= 0.0.0"},
       {:ash_oban, ">= 0.0.0"},
+      {:ash_phoenix, ">= 0.0.0"},
       {:ash_postgres, ">= 0.0.0"},
       {:ash_state_machine, ">= 0.0.0"},
       {:decimal, ">= 0.0.0"},

@@ -1,9 +1,9 @@
 defmodule Mixin do
-  defmacro delegate_to(mod, fname \\ nil, opts \\ []) do
+  defp list_delegates(mod, fname, opts, pred) do
     {mod, _bindings} = Code.eval_quoted(mod)
     arity_or_nil = Keyword.get(opts, :arity)
 
-    for info <- __MODULE__.FunInfo.list_infos(mod, fname) do
+    for info <- __MODULE__.FunInfo.list_infos(mod, fname), pred.(info) do
       dname = Keyword.get(opts, :alias, info.name)
       opts = [to: info.mod, as: info.name]
 
@@ -29,9 +29,22 @@ defmodule Mixin do
     end
   end
 
+  defmacro mixin(mod, opts \\ []) do
+    only = Keyword.get(opts, :only, nil)
+    except = Keyword.get(opts, :except, [])
+
+    list_delegates(mod, nil, opts, fn info ->
+      (!only || info.name in only) && info.name not in except
+    end)
+  end
+
+  defmacro delegate_to(mod, fname, opts \\ []) do
+    list_delegates(mod, fname, opts, &Function.identity/1)
+  end
+
   defmacro __using__(_opts) do
     quote do
-      import Mixin, only: [delegate_to: 1, delegate_to: 2, delegate_to: 3]
+      import Mixin, only: [mixin: 1, mixin: 2, delegate_to: 2, delegate_to: 3]
     end
   end
 end
