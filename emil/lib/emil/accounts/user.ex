@@ -6,6 +6,17 @@ defmodule Emil.Accounts.User do
     extensions: [AshAuthentication],
     data_layer: AshPostgres.DataLayer
 
+  actions do
+    defaults [:read]
+
+    read :get_by_subject do
+      description "Get a user by the subject claim in a JWT"
+      argument :subject, :string, allow_nil?: false
+      get? true
+      prepare AshAuthentication.Preparations.FilterBySubject
+    end
+  end
+
   policies do
     bypass AshAuthentication.Checks.AshAuthenticationInteraction do
       authorize_if always()
@@ -14,6 +25,15 @@ defmodule Emil.Accounts.User do
     policy always() do
       forbid_if always()
     end
+  end
+
+  attributes do
+    uuid_primary_key :id
+  end
+
+  postgres do
+    table "users"
+    repo Emil.Repo
   end
 
   authentication do
@@ -29,26 +49,6 @@ defmodule Emil.Accounts.User do
       signing_secret Emil.Secrets
       store_all_tokens? true
       require_token_presence_for_authentication? true
-    end
-  end
-
-  postgres do
-    table "users"
-    repo Emil.Repo
-  end
-
-  attributes do
-    uuid_primary_key :id
-  end
-
-  actions do
-    defaults [:read]
-
-    read :get_by_subject do
-      description "Get a user by the subject claim in a JWT"
-      argument :subject, :string, allow_nil?: false
-      get? true
-      prepare AshAuthentication.Preparations.FilterBySubject
     end
   end
 end

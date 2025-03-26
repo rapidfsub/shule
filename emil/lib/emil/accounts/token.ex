@@ -6,53 +6,6 @@ defmodule Emil.Accounts.Token do
     extensions: [AshAuthentication.TokenResource],
     data_layer: AshPostgres.DataLayer
 
-  policies do
-    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
-      description "AshAuthentication can interact with the token resource"
-      authorize_if always()
-    end
-
-    policy always() do
-      description "No one aside from AshAuthentication can interact with the tokens resource."
-      forbid_if always()
-    end
-  end
-
-  postgres do
-    table "tokens"
-    repo Emil.Repo
-  end
-
-  attributes do
-    attribute :jti, :string do
-      primary_key? true
-      public? true
-      allow_nil? false
-      sensitive? true
-    end
-
-    attribute :subject, :string do
-      allow_nil? false
-      public? true
-    end
-
-    attribute :expires_at, :utc_datetime do
-      allow_nil? false
-      public? true
-    end
-
-    attribute :purpose, :string do
-      allow_nil? false
-      public? true
-    end
-
-    attribute :extra_data, :map do
-      public? true
-    end
-
-    timestamps()
-  end
-
   actions do
     defaults [:read]
 
@@ -105,5 +58,52 @@ defmodule Emil.Accounts.Token do
       argument :subject, :string, allow_nil?: false, sensitive?: true
       change AshAuthentication.TokenResource.RevokeAllStoredForSubjectChange
     end
+  end
+
+  policies do
+    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
+      description "AshAuthentication can interact with the token resource"
+      authorize_if always()
+    end
+
+    policy always() do
+      description "No one aside from AshAuthentication can interact with the tokens resource."
+      forbid_if always()
+    end
+  end
+
+  attributes do
+    attribute :jti, :string do
+      primary_key? true
+      public? true
+      allow_nil? false
+      sensitive? true
+    end
+
+    attribute :subject, :string do
+      allow_nil? false
+      public? true
+    end
+
+    attribute :expires_at, :utc_datetime do
+      allow_nil? false
+      public? true
+    end
+
+    attribute :purpose, :string do
+      allow_nil? false
+      public? true
+    end
+
+    attribute :extra_data, :map do
+      public? true
+    end
+
+    timestamps()
+  end
+
+  postgres do
+    table "tokens"
+    repo Emil.Repo
   end
 end
