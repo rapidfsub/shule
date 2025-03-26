@@ -5,7 +5,7 @@ defmodule ThisTest.Validation do
   use Ash.Resource.Validation
 
   @impl Ash.Resource.Validation
-  def atomic(changeset, _opts, _context) do
+  def atomic(_changeset, _opts, _context) do
     {:atomic, [:d1, :d2], expr(d1 + d2 < 10), "invalid"}
   end
 end
