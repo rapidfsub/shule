@@ -1,11 +1,9 @@
 #include "two_fer.h"
 
 void two_fer(char *buffer, const char *name) {
-  strcat(buffer, "One for ");
   if (name == NULL) {
-    strcat(buffer, "you");
+    sprintf(buffer, "One for you, one for me.");
   } else {
-    strcat(buffer, name);
+    sprintf(buffer, "One for %s, one for me.", name);
   }
-  strcat(buffer, ", one for me.");
 }
