@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct {
   int strength;

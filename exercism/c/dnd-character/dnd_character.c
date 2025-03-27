@@ -10,7 +10,7 @@ int ability(void) {
 
   int sum = 0;
   int min = dies[0];
-  for (size_t i = 1; i < 4; i += 1) {
+  for (size_t i = 0; i < 4; i += 1) {
     sum += dies[i];
     if (dies[i] < min) {
       min = dies[i];
@@ -26,16 +26,18 @@ int modifier(int score) {
 }
 
 dnd_character_t make_dnd_character(void) {
+  srand(time(NULL));
+  int constitution = ability();
   dnd_character_t result = {
       .strength = ability(),
       .dexterity = ability(),
-      .constitution = ability(),
       .intelligence = ability(),
       .wisdom = ability(),
       .charisma = ability(),
-      .hitpoints = ability(),
+      .constitution = constitution,
+      .hitpoints = modifier(constitution) + 10,
   };
   return result;
 }
 
-int roll_dice(void) { return arc4random() % 6 + 1; }
+int roll_dice(void) { return rand() % 6 + 1; }
