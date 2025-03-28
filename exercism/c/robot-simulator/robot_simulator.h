@@ -1,23 +1,26 @@
 #ifndef ROBOT_SIMULATOR_H
 #define ROBOT_SIMULATOR_H
 
+#include <stdlib.h>
+#include <string.h>
+
 typedef enum {
-   DIRECTION_NORTH = 0,
-   DIRECTION_DEFAULT = DIRECTION_NORTH,
-   DIRECTION_EAST,
-   DIRECTION_SOUTH,
-   DIRECTION_WEST,
-   DIRECTION_MAX
+  DIRECTION_NORTH = 0,
+  DIRECTION_EAST,
+  DIRECTION_SOUTH,
+  DIRECTION_WEST,
+  DIRECTION_MIN = DIRECTION_NORTH,
+  DIRECTION_MAX = DIRECTION_WEST
 } robot_direction_t;
 
 typedef struct {
-   int x;
-   int y;
+  int x;
+  int y;
 } robot_position_t;
 
 typedef struct {
-   robot_direction_t direction;
-   robot_position_t position;
+  robot_direction_t direction;
+  robot_position_t position;
 } robot_status_t;
 
 robot_status_t robot_create(robot_direction_t direction, int x, int y);
