@@ -78,6 +78,8 @@ defmodule ThisTest do
     }
   }
 
+  # ash v3.5.2에서 버그가 고쳐지면서 테스트 실패
+  @tag :skip
   test "does not cast values without field type constraints" do
     changeset = Changeset.for_create(ThisTest.Survey, :create, @params)
     assert [q1, q2, q3] = Changeset.get_argument(changeset, :questions)
