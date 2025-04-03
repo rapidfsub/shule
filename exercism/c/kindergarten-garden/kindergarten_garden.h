@@ -1,10 +1,12 @@
-#ifndef KINDERGARTEN_GARDEN_H
-#define KINDERGARTEN_GARDEN_H
+#pragma once
+
+#include <stdlib.h>
+#include <string.h>
 
 typedef enum { CLOVER = 0, GRASS = 1, RADISHES = 2, VIOLETS = 3 } plant_t;
 
 typedef struct {
-   plant_t plants[4];
+  plant_t plants[4];
 } plants_t;
 
-#endif
+plants_t plants(const char *diagram, const char *student);
