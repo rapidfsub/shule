@@ -19,6 +19,6 @@ typedef struct {
   student_t students[MAX_STUDENTS];
 } roster_t;
 
-void init_roster(roster_t *actual);
-bool add_student(roster_t *actual, const char *name, uint8_t grade);
-roster_t get_grade(roster_t *actual, uint8_t grade);
+void init_roster(roster_t *roster);
+bool add_student(roster_t *roster, const char *name, uint8_t grade);
+roster_t get_grade(roster_t *roster, uint8_t grade);
