@@ -1,14 +1,16 @@
-#ifndef SERIES_H
-#define SERIES_H
+#pragma once
 
 #define MAX_INPUT_TEXT_LENGTH (8)
 #define MAX_SERIES_RESULTS (MAX_INPUT_TEXT_LENGTH)
 #define MAX_SERIES_LENGTH (5)
 
+#include <stdlib.h>
+#include <string.h>
+
 // results structure
 typedef struct slices {
-   unsigned int substring_count;
-   char **substring;   // array of pointers of dimension substring_count
+  unsigned int substring_count;
+  char **substring; // array of pointers of dimension substring_count
 } slices_t;
 
 // slices - routine to slice up input text into consecutive substrings of text
@@ -27,5 +29,3 @@ typedef struct slices {
 //       Calling routine will free memory associated with each of the substrings
 //       and the pointers to the substrings.
 slices_t slices(char *input_text, unsigned int substring_length);
-
-#endif
