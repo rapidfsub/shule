@@ -23,7 +23,9 @@ char **make_diamond(const char letter) {
 }
 
 void free_diamond(char **diamond) {
-  if (diamond != NULL) {
-    free(diamond);
+  size_t limit = strlen(diamond[0]) / 2;
+  for (size_t i = 0; i < limit; i += 1) {
+    free(diamond[i]);
   }
+  free(diamond);
 }
