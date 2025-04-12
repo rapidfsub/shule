@@ -1,7 +1,6 @@
-#ifndef LINKED_LIST_H
-#define LINKED_LIST_H
+#pragma once
 
-#include <stddef.h>
+#include <stdlib.h>
 
 typedef int ll_data_t;
 struct list;
@@ -30,5 +29,3 @@ void list_delete(struct list *list, ll_data_t data);
 // destroys an entire list
 // list will be a dangling pointer after calling this method on it
 void list_destroy(struct list *list);
-
-#endif
