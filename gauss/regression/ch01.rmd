@@ -1,0 +1,108 @@
+---
+title: 01. 단순회귀모형
+---
+
+```{r}
+library(ggplot2)
+```
+
+## 02. 단순회귀모형
+
+```{r}
+market <- read.csv("./data/ch01/market-1.csv")
+head(market)
+
+market_lm <- lm(Y ~ X, data = market)
+summary(market_lm)
+names(market_lm)
+
+market_lm$resid
+```
+
+## 03. 단순회귀모형
+
+> 잔차들의 합은 0이다.
+
+```{r}
+sum(market_lm$resid)
+```
+
+> 관찰값 $Y_i$의 합과 추정값 $\hat{Y_i}$의 합은 같다
+
+```{r}
+sum(market_lm$fitted)
+sum(market$Y)
+```
+
+> 잔차들의 $X_i$에 대한 가중합은 0이다.
+
+```{r}
+sum(market$X * market_lm$resid)
+```
+
+> 잔차들의 $\hat{Y_i}$에 의한 가중합은 0이다.
+
+```{r}
+sum(market_lm$fitted * market_lm$resid)
+```
+
+## 04. 단순회귀 분산분석표
+
+```{r}
+res_anova <- anova(market_lm)
+res_anova
+names(res_anova)
+ss <- res_anova$`Sum Sq`
+ssr <- ss[1]
+sse <- ss[2]
+sst <- ssr + sse
+ssr / sst
+```
+
+```{r}
+par(family = "AppleGothic")
+
+plot(market$X, market$Y, xlab = "인테리어비", ylab = "총판매액", pch = 19)
+title("인테리어비와 판매액의 산점도")
+
+abline(market_lm)
+
+xbar <- mean(market$X)
+ybar <- mean(market$Y)
+c(xbar, ybar)
+points(xbar, ybar, pch = 17, cex = 2.0, col = "RED")
+text(xbar + 1, ybar - 1, "(8.85, 19.36)")
+
+fx <- "Y-hat = 0.33 + 2.15 * X"
+text(xbar - 2, ybar + 3, fx)
+```
+
+## 07. 분석사례
+
+```{r}
+super <- read.csv("./data/ch01/supermarket.csv")
+head(super, 3)
+
+super_lm <- lm(time ~ price, data = super)
+summary(super_lm)
+
+anova(super_lm)
+
+names(super_lm)
+cbind(super, super_lm$resid, super_lm$fitted)
+
+plot(super$price, super$time, pch = 19)
+abline(super_lm)
+
+plot(super$price, super_lm$resid, pch = 19)
+abline(h = 0, lty = 2)
+
+super_predict <- predict(super_lm, interval = "predict")
+super_data <- cbind(super, super_predict)
+
+ggplot(super_data, aes(x = price, y = time)) +
+  geom_point() +
+  stat_smooth(method = lm) +
+  geom_line(aes(y = lwr), col = "coral2", linetype = "dashed") +
+  geom_line(aes(y = upr), col = "coral2", linetype = "dashed")
+```
