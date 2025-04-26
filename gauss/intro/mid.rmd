@@ -1,0 +1,35 @@
+---
+title: 출석수업 과제물
+---
+
+## 연습문제 6.05.
+
+```{r}
+xs <- c(154, 154, 186, 243, 159, 174, 183, 163, 192, 181)
+t.test(xs, mu = 160, alternative = "greater")
+```
+
+## 연습문제 7.08.
+
+```{r}
+pre <- c(4, 4, 3, 4, 3, 2, 6, 6, 5)
+post <- c(1, 6, 2, 2, 4, 3, 5, 4, 3)
+df <- data.frame(pre, post)
+t.test(df$pre, df$post, mu = 0, alternative = "less", paired = TRUE)
+```
+
+## 연습문제 7.09.
+
+```{r}
+a <- c(77, 81, 80, 78, 79)
+b <- c(76, 72, 74, 75, 74, 71, 76)
+c <- c(69, 71, 68, 68, 69, 67)
+x <- c(a, b, c)
+
+type <- c(rep(1, 5), rep(2, 7), rep(3, 6))
+type <- factor(type)
+df <- data.frame(type, x)
+
+model <- aov(x ~ type, data = df)
+summary(model)
+```
