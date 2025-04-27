@@ -81,6 +81,7 @@ compare_performance(
 )
 
 summary(fit_wt_cyl)
+anova(fit_wt, fit_wt_cyl)
 ```
 
 ```{r}
