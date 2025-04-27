@@ -4,7 +4,9 @@ packages <- c(
   "distrTeach",
   "mvtnorm",
   "LaplacesDemon",
-  "TeachingDemos"
+  "patchwork",
+  "TeachingDemos",
+  "tidyverse"
 )
 
 for (pkg in packages) {

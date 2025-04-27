@@ -1,0 +1,35 @@
+---
+title: 출석수업 과제물
+---
+
+```{r, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(purrr)
+library(tibble)
+```
+
+```{r}
+# 202535-368231
+set.seed(8231)
+
+roll_die <- function(count) {
+  die <- floor(6 * runif(count) + 1) |> as.integer()
+
+  freq <- tibble(die = die) |>
+    count(.data[["die"]]) |>
+    mutate(n_rel = map_dbl(n, ~ .x / count))
+
+  ggplot(freq, aes(.data[["die"]], .data[["n_rel"]])) +
+    geom_col(fill = "skyblue", color = "gray") +
+    scale_x_continuous(breaks = seq(1, 7, by = 1)) +
+    geom_hline(yintercept = 1 / 6, linetype = "dashed") +
+    labs(title = paste("n = ", count)) +
+    theme_minimal()
+}
+
+c(10, 100, 1000, 10000) |>
+  map(roll_die) |>
+  wrap_plots(ncol = 2)
+```
