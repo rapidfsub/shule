@@ -4,7 +4,9 @@ packages <- c(
   "distrTeach",
   "mvtnorm",
   "LaplacesDemon",
+  "lm.beta",
   "patchwork",
+  "performance",
   "TeachingDemos",
   "tidyverse"
 )
