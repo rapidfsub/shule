@@ -1,0 +1,89 @@
+---
+title: 출석수업 과제물
+---
+
+```{r}
+library(lm.beta)
+library(performance)
+library(purrr)
+```
+
+```{r}
+data(mtcars)
+# [, 1]	mpg	Miles/(US) gallon
+# [, 2]	cyl	Number of cylinders
+# [, 3]	disp	Displacement (cu.in.)
+# [, 4]	hp	Gross horsepower
+# [, 5]	drat	Rear axle ratio
+# [, 6]	wt	Weight (1000 lbs)
+# [, 7]	qsec	1/4 mile time
+# [, 8]	vs	Engine (0 = V-shaped, 1 = straight)
+# [, 9]	am	Transmission (0 = automatic, 1 = manual)
+# [,10]	gear	Number of forward gears
+# [,11]	carb	Number of carburetors
+
+head(mtcars)
+```
+
+```{r}
+fit_cyl <- lm(mpg ~ cyl, mtcars)
+fit_disp <- lm(mpg ~ disp, mtcars)
+fit_hp <- lm(mpg ~ hp, mtcars)
+fit_drat <- lm(mpg ~ drat, mtcars)
+fit_wt <- lm(mpg ~ wt, mtcars)
+fit_qsec <- lm(mpg ~ qsec, mtcars)
+fit_vs <- lm(mpg ~ vs, mtcars)
+fit_am <- lm(mpg ~ am, mtcars)
+fit_gear <- lm(mpg ~ gear, mtcars)
+fit_carb <- lm(mpg ~ carb, mtcars)
+
+compare_performance(
+  fit_cyl,
+  fit_disp,
+  fit_hp,
+  fit_drat,
+  fit_wt,
+  fit_qsec,
+  fit_vs,
+  fit_am,
+  fit_gear,
+  fit_carb,
+  metrics = "common",
+  rank = TRUE
+)
+
+summary(fit_wt)
+```
+
+```{r}
+fit_wt_cyl <- lm(mpg ~ wt + cyl, mtcars)
+fit_wt_disp <- lm(mpg ~ wt + disp, mtcars)
+fit_wt_hp <- lm(mpg ~ wt + hp, mtcars)
+fit_wt_drat <- lm(mpg ~ wt + drat, mtcars)
+fit_wt_qsec <- lm(mpg ~ wt + qsec, mtcars)
+fit_wt_vs <- lm(mpg ~ wt + vs, mtcars)
+fit_wt_am <- lm(mpg ~ wt + am, mtcars)
+fit_wt_gear <- lm(mpg ~ wt + gear, mtcars)
+fit_wt_carb <- lm(mpg ~ wt + carb, mtcars)
+
+compare_performance(
+  fit_wt_cyl,
+  fit_wt_disp,
+  fit_wt_hp,
+  fit_wt_drat,
+  fit_wt_qsec,
+  fit_wt_vs,
+  fit_wt_am,
+  fit_wt_gear,
+  fit_wt_carb,
+  metrics = "common",
+  rank = TRUE
+)
+
+summary(fit_wt_cyl)
+```
+
+```{r}
+std_fit_wt_cyl <- lm.beta(fit_wt_cyl)
+print(std_fit_wt_cyl)
+```
