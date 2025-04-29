@@ -1,0 +1,60 @@
+---
+title: 변수선택
+---
+
+### 01.
+
+```{r}
+library(fmsb)
+hospital <- read.csv("./data/ch03/hospital.csv")
+VIF(lm(X1 ~ X2 + X3 + X4 + X5, data = hospital))
+```
+
+> VIF
+
+### 03.
+
+```{r}
+library(leaps)
+hald <- read.csv("./data/ch03/hald.csv")
+all_lm <- regsubsets(Y ~ ., data = hald)
+(rs <- summary(all_lm))
+names(rs)
+round(rs$rsq, 3)
+round(rs$adjr2, 3)
+round(rs$cp, 3)
+```
+
+### 04.
+
+```{r}
+start_lm <- lm(Y ~ 1, data = hald)
+full_lm <- lm(Y ~ ., data = hald)
+step(start_lm, scope = list(upper = full_lm), direction = "forward")
+```
+
+> forward
+
+### 05.
+
+```{r}
+step(full_lm, direction = "backward")
+```
+
+> backward
+
+### 06.
+
+```{r}
+step(start_lm, scope = list(upper = full_lm), direction = "both")
+```
+
+> both
+
+### 07.
+
+```{r}
+library(olsrr)
+model <- lm(Y ~ X1 + X2 + X3 + X4, data = hald)
+ols_step_both_p(model)
+```
