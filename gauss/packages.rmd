@@ -2,9 +2,12 @@
 packages <- c(
   "distrEx",
   "distrTeach",
+  "fmsb",
   "mvtnorm",
   "LaplacesDemon",
+  "leaps",
   "lm.beta",
+  "olsrr",
   "patchwork",
   "performance",
   "TeachingDemos",
