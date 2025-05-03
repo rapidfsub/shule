@@ -1,0 +1,45 @@
+---
+title: 02. 중회귀모형
+---
+
+```{r}
+library(lm.beta)
+library(purrr)
+```
+
+### 01.
+
+```{r}
+data <- read.csv("./data/ch02/ex2-1.csv")
+head(data)
+
+# 1)
+model <- lm(Y ~ X1 + X2, data = data)
+summary(model)
+
+# 2)
+x <- cbind(1, data[, -3]) |> as.matrix()
+xt <- t(x)
+xtxi <- solve(xt %*% x)
+hat <- x %*% xtxi %*% xt
+
+y <- as.matrix(data$Y)
+yt <- t(y)
+n <- length(y)
+i <- diag(n)
+mse <- yt %*% (i - hat) %*% y / (n - 3)
+mse <- mse[1, 1]
+
+t(x) %*% x * mse
+
+# 3)
+newdata <- data.frame(X1 = 200, X2 = 59)
+predict(model, int = "c", se.fit = TRUE, newdata = newdata)
+
+# 4)
+summary(model)
+anova(model)
+
+# 5)
+lm.beta(model)
+```
