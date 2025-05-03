@@ -1,0 +1,62 @@
+---
+title: 04. 모형개발
+---
+
+### 01.
+
+```{r}
+maraton <- read.csv("./data/ch04/maraton.csv")
+head(maraton)
+plot(maraton$sect, maraton$m1990, pch = 19)
+maraton_lm <- lm(m1990 ~ sect + I(sect^2) + I(sect^3), data = maraton)
+summary(maraton_lm)
+```
+
+### 02.
+
+> $\hat{\text{m1990}} = 917.593 + 13.785\text{sect} - 0.683\text{sect}^2 + -0.012\text{sect}^3$
+
+### 03.
+
+> 0.9983
+
+### 04.
+
+```{r}
+soup <- read.csv("./data/ch04/soup.csv")
+soup[c(1, 15, 16, 27), ]
+soup$D <- factor(soup$D, levels = c(0, 1), label = c("Line0", "Line1"))
+soup[c(1, 15, 16, 27), ]
+```
+
+### 05.
+
+```{r}
+plot(soup$X, soup$Y, type = "n")
+points(
+  soup$X[soup$D == "Line1"], soup$Y[soup$D == "Line1"],
+  pch = 17, col = "BLUE"
+)
+points(
+  soup$X[soup$D == "Line0"], soup$Y[soup$D == "Line0"],
+  pch = 19, col = "RED"
+)
+legend(
+  "bottomright",
+  legend = levels(soup$D), pch = c(19, 17), col = c("RED", "BLUE")
+)
+```
+
+### 06.
+
+```{r}
+soup_lm <- lm(Y ~ X + D, data = soup)
+summary(soup_lm)
+```
+
+> $\hat{Y} = 27.281 + 1.230X + 53.129D$
+
+### 07.
+
+> $$Intercept_\text{Line1} = $Intercept_\text{Line0} + 53.129$$
+> Line1이 Line0보다 53.129 높다.
