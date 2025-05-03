@@ -1,0 +1,36 @@
+---
+title: 01. 단순회귀모형
+---
+
+### 01.
+
+```{r}
+# 1)
+data <- read.csv("./data/ch01/ex1-1.csv")
+head(data)
+data_lm <- lm(y ~ x, data = data)
+summary(data_lm)
+
+plot(data$x, data$y, pch = 17)
+abline(data_lm)
+
+# 2)
+summary(data_lm)$r.squared
+cor(data$x, data$y)
+
+# 3)
+anova(data_lm)
+
+# 4)
+newdata <- data.frame(x = c(4))
+predict(data_lm, newdata = newdata)
+
+# 5)
+sum(data$y - data_lm$fitted)
+
+# 6)
+sum(data$x * (data$y - data_lm$fitted))
+
+# 7)
+sum(data_lm$fitted * (data$y - data_lm$fitted))
+```
