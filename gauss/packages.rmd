@@ -1,5 +1,6 @@
 ```{r}
 packages <- c(
+  "car",
   "distrEx",
   "distrTeach",
   "fmsb",
