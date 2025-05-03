@@ -1,0 +1,109 @@
+---
+title: 02. 중회귀모형
+---
+
+## 02. 중회귀모형의 추정
+
+```{r}
+market2 <- read.csv("./data/ch02/market-2.csv")
+head(market2, 3)
+
+x <- market2[, c(2:3)]
+x <- cbind(1, x)
+x <- as.matrix(x)
+
+y <- market2[, 4]
+y <- as.matrix(y)
+
+xtx <- t(x) %*% x
+xtx
+
+xtxi <- solve(xtx)
+xty <- t(x) %*% y
+xty
+
+beta <- xtxi %*% xty
+beta <- round(beta, 3)
+beta
+```
+
+## 03. 중회귀모형 분산분석표
+
+```{r}
+market2_lm <- lm(Y ~ X1 + X2, data = market2)
+summary(market2_lm)
+anova(market2_lm)
+
+yhat <- market2_lm$fitted
+cor_yyhat <- cor(market2$Y, yhat)
+round(cor_yyhat^2, 4)
+```
+
+## 04. 표준화된 중회귀분석
+
+```{r}
+library(lm.beta)
+market2_beta <- lm.beta(market2_lm)
+print(market2_beta)
+coef(market2_beta)
+```
+
+## 05. 추정과 검정
+
+```{r}
+pred_x <- data.frame(X1 = 10, X2 = 10)
+pc <- predict(market2_lm, int = "c", newdata = pred_x)
+pc
+
+pc99 <- predict(market2_lm, int = "c", level = 0.99, newdata = pred_x)
+pc99
+```
+
+## 06. 변수 추가
+
+```{r}
+health <- read.csv("./data/ch02/health.csv")
+head(health, 3)
+
+h1_lm <- lm(Y ~ X1, data = health)
+h2_lm <- lm(Y ~ X1 + X4, data = health)
+h3_lm <- lm(Y ~ X1 + X3 + X4, data = health)
+h4_lm <- lm(Y ~ X1 + X2 + X3 + X4, data = health)
+anova(h1_lm, h2_lm)
+anova(h2_lm, h3_lm)
+anova(h3_lm, h4_lm)
+```
+
+```{r}
+library(car)
+avPlots(h4_lm)
+summary(h4_lm)
+```
+
+## 08. 분석 사례
+
+```{r}
+# 1. 자료파일 읽기
+chemical <- read.csv("./data/ch02/chemical.csv")
+head(chemical)
+
+# 2. 기술통계량 및 상관계수 보기
+summary(chemical[, -1])
+cor(chemical[, -1])
+
+# 3. 회귀모형 적합하기
+chemical_lm <- lm(loss ~ speed + temp, data = chemical)
+summary(chemical_lm)
+
+avPlots(chemical_lm)
+
+# 4. 분산분석표 구하기
+anova(chemical_lm)
+
+# 5. 잔차산점도 그리기
+plot(chemical$speed, chemical_lm$resid)
+plot(chemical$temp, chemical_lm$resid)
+
+plot(chemical_lm$fitted, chemical_lm$resid)
+abline(h = 0, lty = 2)
+```
