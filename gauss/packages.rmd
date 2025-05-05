@@ -4,14 +4,17 @@ packages <- c(
   "distrEx",
   "distrTeach",
   "fmsb",
+  "mvnormtest",
   "mvtnorm",
   "LaplacesDemon",
   "leaps",
+  "lmtest",
   "lm.beta",
   "olsrr",
   "patchwork",
   "performance",
   "plotly",
+  "qqplotr",
   "TeachingDemos",
   "tidyverse"
 )
