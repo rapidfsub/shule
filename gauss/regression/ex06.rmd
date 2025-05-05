@@ -1,0 +1,18 @@
+---
+title: 06. 모형의 진단
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+### 01.
+
+```{r}
+data <- read.csv("./data/ch06/goose.csv")
+head(data)
+model <- lm(photo ~ obsB, data = data)
+
+library(car)
+ncvTest(model)
+```
