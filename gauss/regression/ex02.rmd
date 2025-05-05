@@ -2,7 +2,9 @@
 title: 02. 중회귀모형
 ---
 
-```{r}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+
 library(lm.beta)
 library(purrr)
 ```
@@ -42,4 +44,22 @@ anova(model)
 
 # 5)
 lm.beta(model)
+```
+
+### 02.
+
+```{r}
+data <- read.csv("./data/ch02/ex2-2.csv")
+head(data)
+model <- lm(Y ~ X1 + X2 + X3, data = data)
+
+# 1)
+summary(model)
+
+# 2)
+anova(model)
+
+# 3)
+newdata <- data.frame(X1 = 20, X2 = 27, X3 = 60)
+predict(model, int = "p", newdata = newdata)
 ```

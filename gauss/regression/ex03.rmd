@@ -1,0 +1,22 @@
+---
+title: 03. 변수선택
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+### 01.
+
+```{r}
+data <- read.csv("./data/ch03/ex3-1.csv")
+head(data)
+
+# 1)
+cor(data[, c(-1, -8)])
+
+# 2)
+library(car)
+model <- lm(EVAP ~ MAXST + MINST + AVST + MAXAT + MINAT + AVAT, data = data)
+vif(model)
+```

@@ -1,0 +1,61 @@
+---
+title: 04. 모형개발
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+library(purrr)
+```
+
+## 4.1 다항회귀모형
+
+```{r}
+tcrime <- read.csv("./data/ch04/tcrime.csv")
+head(tcrime)
+plot(tcrime$motor, tcrime$tcratio, xlab = "motor", ylab = "tcrime", pch = 19)
+
+tcrime_lm <- lm(tcratio ~ motor + I(motor^2), data = tcrime)
+summary(tcrime_lm)
+```
+
+```{r}
+maraton <- read.table("./data/ch04/maraton.txt", header = TRUE)
+head(maraton)
+plot(maraton$sect, maraton$m1990, pch = 19)
+
+maraton_lm <- lm(m1990 ~ sect + I(sect^2) + I(sect^3), data = maraton)
+summary(maraton_lm)
+```
+
+### 4.2 가변수 회귀모형
+
+```{r}
+soup <- read.csv("./data/ch04/soup.csv")
+soup[c(1, 15, 16, 27), ]
+
+soup$D <- factor(soup$D, levels = c(0, 1), label = c("Line0", "Line1"))
+soup[c(1, 15, 16, 27), ]
+
+plot(soup$X, soup$Y, type = "n")
+points(
+  soup$X[soup$D == "Line1"], soup$Y[soup$D == "Line1"],
+  pch = 17, col = "BLUE"
+)
+points(
+  soup$X[soup$D == "Line0"], soup$Y[soup$D == "Line0"],
+  pch = 19, col = "RED"
+)
+legend(
+  "bottomright",
+  legend = levels(soup$D), pch = c(19, 17), col = c("RED", "BLUE")
+)
+
+soup_lm <- lm(Y ~ X + D, data = soup)
+summary(soup_lm)
+b <- coef(soup_lm)
+abline(b[1], b[2], lty = 2, col = "RED")
+abline(b[1] + b[3], b[2], lty = 2, col = "BLUE")
+
+soup_lm <- lm(Y ~ X + D + X:D, data = soup)
+summary(soup_lm)
+```

@@ -34,3 +34,22 @@ sum(data$x * (data$y - data_lm$fitted))
 # 7)
 sum(data_lm$fitted * (data$y - data_lm$fitted))
 ```
+
+### 02.
+
+```{r}
+data <- read.csv("./data/ch01/ex1-2.csv")
+head(data)
+model <- lm(y ~ x, data = data)
+
+# 1)
+plot(data$x, data$y, pch = 19)
+abline(model)
+
+# 2)
+anova(model)
+
+# 3)
+newdata <- data.frame(x = 3)
+predict(model, newdata = newdata, int = "p")
+```

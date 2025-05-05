@@ -1,0 +1,107 @@
+---
+title: 03. 변수선택
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+library(purrr)
+```
+
+## 3.2 다중공선성
+
+```{r}
+bpdata <- read.csv("./data/ch03/bloodpress.csv")
+head(bpdata, 3)
+pairs(bpdata, pch = 19)
+
+bp1_lm <- lm(BP ~ Weight, data = bpdata)
+bp2_lm <- lm(BP ~ BSA, data = bpdata)
+bp3_lm <- lm(BP ~ Weight + BSA, data = bpdata)
+
+summary(bp1_lm)
+summary(bp2_lm)
+summary(bp3_lm)
+```
+
+```{r}
+hospital <- read.table("./data/ch03/hospital.txt", header = TRUE)
+head(hospital)
+hospital_lm <- lm(Y ~ X1 + X2 + X3 + X4 + X5, data = hospital)
+summary(hospital_lm)
+anova(hospital_lm)
+library(fmsb)
+VIF(lm(X1 ~ X2 + X3 + X4 + X5, data = hospital))
+VIF(lm(X2 ~ X1 + X3 + X4 + X5, data = hospital))
+VIF(lm(X3 ~ X1 + X2 + X4 + X5, data = hospital))
+VIF(lm(X4 ~ X1 + X2 + X3 + X5, data = hospital))
+VIF(lm(X5 ~ X1 + X2 + X3 + X4, data = hospital))
+
+cor(hospital[, -6])
+
+lm(Y ~ X2 + X3 + X4 + X5, data = hospital) |> summary()
+VIF(lm(X2 ~ X3 + X4 + X5, data = hospital))
+VIF(lm(X3 ~ X2 + X4 + X5, data = hospital))
+VIF(lm(X4 ~ X2 + X3 + X5, data = hospital))
+VIF(lm(X5 ~ X2 + X3 + X4, data = hospital))
+```
+
+## 3.5 변수선택의 방법
+
+### 3.5.1 모든 가능한 회귀
+
+```{r}
+hald <- read.table("./data/ch03/hald.txt", header = TRUE)
+head(hald)
+```
+
+```{r}
+library(leaps)
+all_lm <- regsubsets(Y ~ ., data = hald)
+(rs <- summary(all_lm))
+names(rs)
+round(rs$rsq, 3)
+round(rs$adjr2, 3)
+round(rs$cp, 3)
+
+x <- hald[, -5]
+y <- hald[, 5]
+leaps(x, y, method = "Cp")
+```
+
+```{r}
+library(olsrr)
+model <- lm(Y ~ X1 + X2 + X3 + X4, data = hald)
+ols_step_all_possible(model)
+```
+
+### 3.5.2 앞으로부터 선택법
+
+```{r}
+start_lm <- lm(Y ~ 1, data = hald)
+full_lm <- lm(Y ~ ., data = hald)
+step(start_lm, scope = list(upper = full_lm), direction = "forward")
+```
+
+```{r}
+ols_step_forward_p(model)
+```
+
+### 3.5.3 뒤로부터 제거법
+
+```{r}
+step(full_lm, scope = list(lower = start_lm), direction = "backward")
+```
+
+```{r}
+ols_step_backward_p(model)
+```
+
+### 3.5.4 단계별 회귀방법
+
+```{r}
+step(start_lm, scope = list(upper = full_lm), direction = "both")
+```
+
+```{r}
+ols_step_both_p(model)
+```
