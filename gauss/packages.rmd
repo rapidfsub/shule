@@ -11,6 +11,7 @@ packages <- c(
   "olsrr",
   "patchwork",
   "performance",
+  "plotly",
   "TeachingDemos",
   "tidyverse"
 )
