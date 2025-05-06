@@ -1,0 +1,68 @@
+---
+title: 06. 모형의 진단
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+## 6.2 오차의 등분산성
+
+```{r}
+goose <- read.csv("./data/ch06/goose.csv")
+head(goose, 3)
+goose_lm <- lm(photo ~ obsA, data = goose)
+plot(goose_lm$fitted, goose_lm$resid, pch = 19)
+
+library(lmtest)
+gqtest(goose_lm, order.by = ~obsA, data = goose, fraction = 20)
+
+library(car)
+ncvTest(goose_lm)
+```
+
+## 6.3 회귀모형의 선형성
+
+```{r}
+tree <- read.csv("./data/ch06/tree.csv")
+head(tree, 3)
+tree_lm <- lm(V ~ D + H, data = tree)
+plot(tree$D, tree_lm$resid, pch = 19)
+plot(tree$H, tree_lm$resid, pch = 19)
+```
+
+## 6.4 오차의 정규성
+
+```{r}
+library(ggplot2)
+library(qqplotr)
+rstandard_values <- rstandard(goose_lm)
+
+ggplot(mapping = aes(sample = rstandard_values)) +
+  stat_qq_point(size = 2, color = "red") +
+  stat_qq_line(color = "black") +
+  xlab("theoretical") +
+  ylab("rstandard")
+```
+
+```{r}
+library(mvnormtest)
+shapiro.test(rstandard_values)
+```
+
+## 6.5 변수변환
+
+```{r}
+energy <- read.csv("./data/ch06/energy.csv")
+head(energy, 3)
+energy_lm <- lm(Y ~ X, data = energy)
+plot(energy_lm$fitted, energy_lm$resid, pch = 19)
+```
+
+```{r}
+library(MASS)
+bc <- boxcox(energy_lm)
+str(bc)
+bc_lambda <- bc$x[which.max(bc$y)]
+bc_lambda
+```

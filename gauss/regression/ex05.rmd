@@ -1,0 +1,29 @@
+---
+title: 05. 자료의 진단
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+### 01.
+
+```{r}
+data <- data.frame(
+  X = c(2, 3, 4, 5, 5, 6, 7, 8, 9, 10),
+  Y = c(30, 40, 40, 50, 80, 60, 60, 60, 70, 120)
+)
+head(data)
+
+model <- lm(Y ~ X, data = data)
+summary(model)
+model_diag <- ls.diag(model)
+model_st <- cbind(
+  model_diag$hat, model_diag$std.res, model_diag$stud.res, model_diag$cooks
+)
+colnames(model_st) <- c("Hii", "ri", "ti", "Di", "p-value")
+model_st
+
+library(car)
+outlierTest(model)
+```
