@@ -4,6 +4,7 @@ packages <- c(
   "distrEx",
   "distrTeach",
   "fmsb",
+  "languageserver",
   "LaplacesDemon",
   "leaps",
   "lmtest",
