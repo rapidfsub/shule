@@ -1,10 +1,24 @@
 ```{r}
 packages <- c(
+  "car",
   "distrEx",
   "distrTeach",
-  "mvtnorm",
+  "fmsb",
+  "languageserver",
   "LaplacesDemon",
-  "TeachingDemos"
+  "leaps",
+  "lmtest",
+  "lm.beta",
+  "mfx",
+  "mvnormtest",
+  "mvtnorm",
+  "olsrr",
+  "patchwork",
+  "performance",
+  "plotly",
+  "qqplotr",
+  "TeachingDemos",
+  "tidyverse"
 )
 
 for (pkg in packages) {

@@ -1,0 +1,84 @@
+---
+title: 05. 자료의 진단
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+## 5.3 특이점
+
+```{r}
+forbes <- read.csv("./data/ch05/forbes.csv")
+forbes$Lpress <- 100 * log10(forbes$press)
+head(forbes)
+
+plot(forbes$temp, forbes$Lpres, pch = 19)
+text(forbes[12, "temp"], forbes[12, "Lpress"] + 1, "12")
+```
+
+```{r}
+forbes_lm <- lm(Lpress ~ temp, data = forbes)
+summary(forbes_lm)
+anova(forbes_lm)
+```
+
+```{r}
+forbes_res <- ls.diag(forbes_lm)
+names(forbes_res)
+resid_result <- cbind(forbes_res$std.res, forbes_res$stud.res, forbes_res$hat)
+colnames(resid_result) <- c("standardized resid", "studentized resid", "Hat")
+resid_result <- round(resid_result, 3)
+print(resid_result)
+```
+
+```{r}
+rstudent(forbes_lm)
+
+library(car)
+outlierTest(forbes_lm)
+```
+
+## 5.4 관측값의 영향
+
+```{r}
+prater <- read.csv("./data/ch05/prater.csv")
+head(prater, 2)
+
+prater_lm <- lm(Y ~ X1 + X2 + X3 + X4, data = prater)
+summary(prater_lm)
+```
+
+```{r}
+start_lm <- lm(Y ~ 1, data = prater)
+full_lm <- lm(Y ~ X1 + X2 + X3 + X4, data = prater)
+step(start_lm, scope = list(upper = full_lm), data = prater, direction = "both")
+```
+
+```{r}
+soil <- read.csv("./data/ch05/soil.csv")
+head(soil, 3)
+soil_lm <- lm(SL ~ SG + LOBS + PGC, data = soil)
+summary(soil_lm)
+anova(soil_lm)
+```
+
+```{r}
+plot(soil_lm$fitted, soil_lm$resid, pch = 19, ylim = c(-3, 3))
+text(soil_lm$fitted, soil_lm$resid, labels = soil$obs, pos = 3, cex = 0.7)
+```
+
+```{r}
+soil_diag <- ls.diag(soil_lm)
+names(soil_diag)
+diag_st <- cbind(
+  soil_diag$hat, soil_diag$std.res, soil_diag$stud.res, soil_diag$cooks
+)
+colnames(diag_st) <- c("Hii", "ri", "ti", "Di")
+round(diag_st, 3)
+
+di <- cooks.distance(soil_lm)
+round(di, 3)
+
+outlierTest(soil_lm)
+```

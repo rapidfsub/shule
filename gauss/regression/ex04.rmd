@@ -1,0 +1,47 @@
+---
+title: 04. 모형개발
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+library(purrr)
+```
+
+### 01.
+
+```{r}
+data <- read.table("./data/ch04/maraton.txt", header = TRUE)
+head(data)
+
+w <- 1 / data$sd1990^2
+model1990 <- lm(m1990 ~ sect + I(sect^2) + I(sect^3), data = data, weights = w)
+summary(model1990)
+
+w <- 1 / data$sd1991^2
+model1991 <- lm(m1991 ~ sect + I(sect^2) + I(sect^3), data = data, weights = w)
+summary(model1991)
+
+w <- 1 / data$sd1992^2
+model1992 <- lm(m1992 ~ sect + I(sect^2) + I(sect^3), data = data, weights = w)
+summary(model1992)
+
+plot(data$sect, model1990$fitted, type = "n")
+points(data$sect, model1990$fitted, pch = 17, col = "RED")
+points(data$sect, model1991$fitted, pch = 18, col = "BLUE")
+points(data$sect, model1992$fitted, pch = 19, col = "GREEN")
+```
+
+### 02.
+
+```{r}
+data <- read.csv("./data/ch04/ex4-2.csv")
+head(data)
+
+# 1)
+model <- lm(Y ~ X1 + X2 + I(X1^2) + I(X2^2) + X1:X2, data = data)
+summary(model)
+
+# 2)
+model_h0 <- lm(Y ~ X1 + X2 + I(X1^2) + I(X2^2), data = data)
+anova(model_h0, model)
+```

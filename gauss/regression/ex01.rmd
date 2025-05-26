@@ -1,0 +1,77 @@
+---
+title: 01. 단순회귀모형
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+### 01.
+
+```{r}
+# 1)
+data <- read.csv("./data/ch01/ex1-1.csv")
+head(data)
+data_lm <- lm(y ~ x, data = data)
+summary(data_lm)
+
+plot(data$x, data$y, pch = 17)
+abline(data_lm)
+
+# 2)
+summary(data_lm)$r.squared
+cor(data$x, data$y)
+
+# 3)
+anova(data_lm)
+
+# 4)
+newdata <- data.frame(x = c(4))
+predict(data_lm, newdata = newdata)
+
+# 5)
+sum(data$y - data_lm$fitted)
+
+# 6)
+sum(data$x * (data$y - data_lm$fitted))
+
+# 7)
+sum(data_lm$fitted * (data$y - data_lm$fitted))
+```
+
+### 02.
+
+```{r}
+data <- read.csv("./data/ch01/ex1-2.csv")
+head(data)
+model <- lm(y ~ x, data = data)
+
+# 1)
+plot(data$x, data$y, pch = 19)
+abline(model)
+
+# 2)
+anova(model)
+
+# 3)
+newdata <- data.frame(x = 3)
+predict(model, newdata = newdata, int = "p")
+```
+
+### 03.
+
+```{r}
+data <- read.csv("./data/ch01/ex1-3.csv")
+head(data)
+
+# 1)
+model <- lm(y ~ x, data = data)
+anova(model)
+
+# 2)
+names(model)
+result <- cbind(data$x, model$fitted, model$resid)
+colnames(result) <- c("x_i", "yhat_i", "y_i - yhat_i")
+head(result)
+plot(data$year, model$resid, pch = 19)
+```
