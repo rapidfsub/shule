@@ -20,3 +20,22 @@ library(car)
 model <- lm(EVAP ~ MAXST + MINST + AVST + MAXAT + MINAT + AVAT, data = data)
 vif(model)
 ```
+
+### 02.
+
+```{r}
+data <- read.csv("./data/ch03/ex3-2.csv")
+head(data)
+
+# 1)
+cor(data[, -1])
+
+# 2)
+library(fmsb)
+VIF(lm(X1 ~ X2 + X3 + X4 + X5 + X6, data = data))
+VIF(lm(X2 ~ X1 + X3 + X4 + X5 + X6, data = data))
+VIF(lm(X3 ~ X1 + X2 + X4 + X5 + X6, data = data))
+VIF(lm(X4 ~ X1 + X2 + X3 + X5 + X6, data = data))
+VIF(lm(X5 ~ X1 + X2 + X3 + X4 + X6, data = data))
+VIF(lm(X6 ~ X1 + X2 + X3 + X4 + X5, data = data))
+```

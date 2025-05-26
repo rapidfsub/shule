@@ -63,3 +63,37 @@ anova(model)
 newdata <- data.frame(X1 = 20, X2 = 27, X3 = 60)
 predict(model, int = "p", newdata = newdata)
 ```
+
+### 03.
+
+```{r}
+data <- read.csv("./data/ch02/chemical.csv")
+head(data)
+
+model <- lm(loss ~ speed + temp, data = data)
+summary(model)
+anova(model)
+
+# 1)
+confint(model)
+
+# 2)
+newdata <- data.frame(speed = 55, temp = 25)
+predict(model, int = "c", newdata = newdata)
+
+# 3-a)
+plot(data$loss, model$resid)
+# 3-b)
+plot(data$speed, model$resid, pch = 19)
+# 3-c)
+plot(data$temp, model$resid, pch = 17)
+
+# 4-a)
+sum(model$resid)
+# 4-b)
+sum(model$fitted * model$resid)
+# 4-c)
+sum(data$speed * model$resid)
+# 4-d)
+sum(data$temp * model$resid)
+```

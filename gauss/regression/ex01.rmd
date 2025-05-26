@@ -2,6 +2,10 @@
 title: 01. 단순회귀모형
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
 ### 01.
 
 ```{r}
@@ -52,4 +56,22 @@ anova(model)
 # 3)
 newdata <- data.frame(x = 3)
 predict(model, newdata = newdata, int = "p")
+```
+
+### 03.
+
+```{r}
+data <- read.csv("./data/ch01/ex1-3.csv")
+head(data)
+
+# 1)
+model <- lm(y ~ x, data = data)
+anova(model)
+
+# 2)
+names(model)
+result <- cbind(data$x, model$fitted, model$resid)
+colnames(result) <- c("x_i", "yhat_i", "y_i - yhat_i")
+head(result)
+plot(data$year, model$resid, pch = 19)
 ```
