@@ -11,7 +11,7 @@ defmodule Emil.MixProject do
       # consolidate_protocols: Mix.env() != :dev,
       consolidate_protocols: Mix.env() not in [:dev, :test],
       aliases: List.flatten([phx_aliases(), aliases()]) |> Keyword.new(),
-      deps: List.flatten([deps(), local_deps(), dev_deps(), phx_deps()])
+      deps: List.flatten([deps(), local_deps(), dev_deps(), time_zone_info_deps(), phx_deps()])
     ]
   end
 
@@ -57,6 +57,14 @@ defmodule Emil.MixProject do
     [
       {:igniter, ">= 0.0.0", only: [:dev, :test]},
       {:sourceror, ">= 0.0.0", only: [:dev, :test]}
+    ]
+  end
+
+  defp time_zone_info_deps() do
+    [
+      {:castore, ">= 0.0.0"},
+      {:mint, ">= 0.0.0"},
+      {:time_zone_info, ">= 0.0.0"}
     ]
   end
 
