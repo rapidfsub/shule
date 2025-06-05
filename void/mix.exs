@@ -25,6 +25,7 @@ defmodule Void.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:simple_sat, "~> 0.1"},
       {:picosat_elixir, "~> 0.2"},
       {:ash_authentication, "~> 4.0"},
