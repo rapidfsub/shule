@@ -5,10 +5,10 @@ defmodule ThisTest do
   use Emil.TestDataCase, async?: true
 
   test "should be equal even if the time zone is different" do
-    params = %{expires_at: ~U[2000-01-02 00:15:00Z]}
+    params = %{expires_at: FakeDateTime.utc_now() |> DateTime.shift(minute: 15)}
 
     obj =
-      Changeset.for_create(Emil.SimpleDomain.Token, :create, params)
+      Changeset.for_create(SimpleDomain.Token, :create, params)
       |> Ash.create!()
       |> Ash.load!([:is_utc_active, :is_seoul_active])
 

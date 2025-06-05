@@ -3,6 +3,8 @@ defmodule Emil.TestPrelude do
     quote do
       use Emil.Prelude
 
+      alias Emil.FakeDateTime
+      alias Emil.SimpleDomain
       alias Emil.TestDomain
     end
   end

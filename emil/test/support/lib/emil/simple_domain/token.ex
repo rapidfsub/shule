@@ -1,24 +1,12 @@
-defmodule Emil.SimpleDomain.TokenDateTime do
-  def utc_now() do
-    ~U[2000-01-02 00:00:00Z]
-  end
-
-  def seoul_now() do
-    DateTime.shift_zone!(utc_now(), "Asia/Seoul")
-  end
-end
-
 defmodule Emil.SimpleDomain.Token do
+  use Emil.TestPrelude
+
   use Ash.Resource,
     domain: Emil.SimpleDomain,
     data_layer: AshPostgres.DataLayer
 
   actions do
     defaults [:read, create: :*]
-  end
-
-  preparations do
-    prepare build(load: [:is_utc_active, :is_seoul_active])
   end
 
   attributes do
@@ -28,11 +16,11 @@ defmodule Emil.SimpleDomain.Token do
 
   calculations do
     calculate :is_utc_active, :boolean do
-      calculation expr(expires_at > lazy({Emil.SimpleDomain.TokenDateTime, :utc_now, []}))
+      calculation expr(expires_at > lazy({FakeDateTime, :utc_now, []}))
     end
 
     calculate :is_seoul_active, :boolean do
-      calculation expr(expires_at > lazy({Emil.SimpleDomain.TokenDateTime, :seoul_now, []}))
+      calculation expr(expires_at > lazy({FakeDateTime, :seoul_now, []}))
     end
   end
 
