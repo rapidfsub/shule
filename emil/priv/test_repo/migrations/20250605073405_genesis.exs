@@ -8,6 +8,11 @@ defmodule Emil.TestRepo.Migrations.Genesis do
   use Ecto.Migration
 
   def up do
+    create table(:token, primary_key: false) do
+      add :id, :uuid, null: false, default: fragment("uuid_generate_v7()"), primary_key: true
+      add :expires_at, :utc_datetime, null: false
+    end
+
     create table(:candle, primary_key: false) do
       add :id, :bigserial, null: false, primary_key: true
       add :open, :decimal, null: false
@@ -26,5 +31,7 @@ defmodule Emil.TestRepo.Migrations.Genesis do
     drop table(:bot)
 
     drop table(:candle)
+
+    drop table(:token)
   end
 end
