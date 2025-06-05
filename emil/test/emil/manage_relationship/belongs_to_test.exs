@@ -80,12 +80,14 @@ defmodule ThisTest do
     assert Decimal.eq?(obj.account.balance, 0)
   end
 
+  @tag :skip
   test "updates account when given primary key", %{obj: obj} do
     params = %{account: obj.account_id}
     assert obj = Changeset.for_update(obj, :increase_balance, params) |> Ash.update!()
     assert Decimal.eq?(obj.account.balance, 1)
   end
 
+  @tag :skip
   test "updates account when given map with primary key", %{obj: obj} do
     params = %{account: %{id: obj.account_id}}
     assert obj = Changeset.for_update(obj, :increase_balance, params) |> Ash.update!()

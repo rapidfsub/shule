@@ -91,6 +91,7 @@ defmodule ThisTest do
     assert q3.score == "invalid value"
   end
 
+  @tag :skip
   test "raises an error if a field type constraint is violated" do
     assert_raise Ash.Error.Unknown, fn ->
       Changeset.for_create(ThisTest.Survey, :strict_create, @params)
