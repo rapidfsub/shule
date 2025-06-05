@@ -1,5 +1,7 @@
 import Config
 
+config :void, token_signing_secret: "enlcb4EReIIeDnKFa0FMRIqkU/+3BrSq"
+config :bcrypt_elixir, log_rounds: 1
 config :logger, level: :warning
 config :ash, disable_async?: true
 

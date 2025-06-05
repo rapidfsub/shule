@@ -5,7 +5,7 @@ defmodule Void.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [Void.Repo]
+    children = [Void.Repo, {AshAuthentication.Supervisor, [otp_app: :void]}]
 
     opts = [strategy: :one_for_one, name: Void.Supervisor]
     Supervisor.start_link(children, opts)

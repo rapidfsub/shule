@@ -1,5 +1,7 @@
 import Config
 
+config :void, token_signing_secret: "hsh3IzsfQWNisEsdolMxFc7g/3+64ZXa"
+
 config :void, Void.Repo,
   username: "postgres",
   password: "postgres",

@@ -1,6 +1,6 @@
 import Config
 
-config :void, ecto_repos: [Void.Repo]
+config :void, ecto_repos: [Void.Repo], ash_domains: [Void.Accounts]
 
 config :ash,
   allow_forbidden_field_for_relationships_by_default?: true,
@@ -18,6 +18,8 @@ config :spark,
     remove_parens?: true,
     "Ash.Resource": [
       section_order: [
+        :authentication,
+        :tokens,
         :postgres,
         :resource,
         :code_interface,
