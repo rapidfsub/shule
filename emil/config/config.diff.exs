@@ -46,3 +46,6 @@ config :spark,
     ],
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
+
+config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
+config :time_zone_info, update: :daily
