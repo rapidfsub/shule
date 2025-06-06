@@ -3,21 +3,33 @@ defmodule VictorWeb.HomeLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    form = to_form(%{}, as: :form)
+    socket = socket |> assign(form: form)
     {:ok, socket}
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.form :let={form} for={%{}} id="form" phx-change="validate">
-      <.input field={form[:price]} type="number" label="Price" />
+    <.form for={@form} id="form" phx-change="validate">
+      <.input field={@form[:name]} label="Name" />
+      <VictorWeb.Mask.new
+        id="price_mask"
+        field={@form[:price]}
+        data-mask="Number"
+        data-thousands-separator=","
+        data-autofix="true"
+      >
+        <.input field={@form[:price]} label="Price" />
+      </VictorWeb.Mask.new>
     </.form>
     """
   end
 
   @impl Phoenix.LiveView
-  def handle_event("validate", params, socket) do
-    IO.inspect(params)
+  def handle_event("validate", %{"form" => params}, socket) do
+    form = to_form(params, as: :form)
+    socket = socket |> assign(form: form)
     {:noreply, socket}
   end
 end
