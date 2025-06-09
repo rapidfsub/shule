@@ -9,7 +9,7 @@ defmodule Tunez.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps(),
+      deps: Enum.concat([deps(), dev_deps(), phx_deps()]),
       listeners: [Phoenix.CodeReloader]
     ]
   end
@@ -31,9 +31,21 @@ defmodule Tunez.MixProject do
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
-  defp deps do
+  defp deps() do
     [
-      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:ash, ">= 0.0.0"}
+    ]
+  end
+
+  defp dev_deps() do
+    [
+      {:igniter, ">= 0.0.0", only: [:dev, :test]},
+      {:sourceror, ">= 0.0.0", only: [:dev, :test]}
+    ]
+  end
+
+  defp phx_deps() do
+    [
       {:phoenix, "~> 1.8.0-rc.3", override: true},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
