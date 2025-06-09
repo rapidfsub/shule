@@ -96,7 +96,10 @@ defmodule Tunez.MixProject do
         "esbuild tunez --minify",
         "phx.digest"
       ],
-      seed: ["run priv/repo/seeds/01-artists.exs"]
+      seed: [
+        "run priv/repo/seeds/01-artists.exs",
+        "run priv/repo/seeds/02-albums.exs"
+      ]
     ]
   end
 end

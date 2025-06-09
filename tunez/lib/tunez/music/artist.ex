@@ -18,7 +18,9 @@ defmodule Tunez.Music.Artist do
 
     update :update do
       primary? true
+      require_atomic? false
       accept [:name, :biography]
+      change Tunez.Music.Changes.UpdatePreviousNames, where: changing(:name)
     end
 
     destroy :destroy do
@@ -30,6 +32,11 @@ defmodule Tunez.Music.Artist do
     uuid_v7_primary_key :id
     attribute :name, :string, allow_nil?: false
     attribute :biography, :string
+    attribute :previous_names, {:array, :string}, default: []
     timestamps []
+  end
+
+  relationships do
+    has_many :albums, Tunez.Music.Album, sort: [year_released: :desc]
   end
 end
