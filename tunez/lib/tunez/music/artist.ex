@@ -15,6 +15,11 @@ defmodule Tunez.Music.Artist do
     read :read do
       primary? true
     end
+
+    update :update do
+      primary? true
+      accept [:name, :biography]
+    end
   end
 
   attributes do
