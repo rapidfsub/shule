@@ -3,7 +3,7 @@ defmodule Tunez.Music.Artist do
     otp_app: :tunez,
     domain: Tunez.Music,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshJsonApi.Resource]
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
 
   postgres do
     table "artists"
@@ -75,5 +75,9 @@ defmodule Tunez.Music.Artist do
     type "artist"
     includes [:albums]
     derive_filter? false
+  end
+
+  graphql do
+    type :artist
   end
 end
