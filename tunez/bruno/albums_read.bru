@@ -1,0 +1,11 @@
+meta {
+  name: albums_read
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{host}}/api/json/artists/{{id}}/albums
+  body: none
+  auth: none
+}
