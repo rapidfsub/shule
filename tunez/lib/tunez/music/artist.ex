@@ -55,7 +55,7 @@ defmodule Tunez.Music.Artist do
   end
 
   relationships do
-    has_many :albums, Tunez.Music.Album, sort: [year_released: :desc]
+    has_many :albums, Tunez.Music.Album, sort: [year_released: :desc], public?: true
   end
 
   aggregates do
@@ -66,5 +66,6 @@ defmodule Tunez.Music.Artist do
 
   json_api do
     type "artist"
+    includes [:albums]
   end
 end
