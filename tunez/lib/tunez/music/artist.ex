@@ -8,7 +8,12 @@ defmodule Tunez.Music.Artist do
 
   actions do
     create :create do
+      primary? true
       accept [:name, :biography]
+    end
+
+    read :read do
+      primary? true
     end
   end
 
