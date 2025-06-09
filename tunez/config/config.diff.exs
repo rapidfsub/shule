@@ -35,3 +35,6 @@ config :spark,
     ],
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
+
+config :tunez,
+  ash_domains: [Tunez.Music]
