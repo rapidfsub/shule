@@ -53,4 +53,10 @@ defmodule Tunez.Music.Artist do
   relationships do
     has_many :albums, Tunez.Music.Album, sort: [year_released: :desc]
   end
+
+  aggregates do
+    count :album_count, :albums
+    first :latest_album_year_released, :albums, :year_released
+    first :cover_image_url, :albums, :cover_image_url
+  end
 end
