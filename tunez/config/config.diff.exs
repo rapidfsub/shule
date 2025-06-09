@@ -11,6 +11,16 @@ config :ash,
   read_action_after_action_hooks_in_order?: true,
   bulk_actions_default_to_errors?: true
 
+config :ash_graphql, authorize_update_destroy_with_error?: true
+
+config :ash_json_api,
+  show_public_calculations_when_loaded?: false,
+  authorize_update_destroy_with_error?: true
+
+config :mime,
+  extensions: %{"json" => "application/vnd.api+json"},
+  types: %{"application/vnd.api+json" => ["json"]}
+
 config :spark,
   formatter: [
     remove_parens?: true,
@@ -30,10 +40,23 @@ config :spark,
         :relationships,
         :calculations,
         :aggregates,
-        :identities
+        :identities,
+        :json_api,
+        :graphql
       ]
     ],
-    "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
+    "Ash.Domain": [
+      section_order: [
+        :resources,
+        :policies,
+        :authorization,
+        :domain,
+        :execution,
+        :forms,
+        :json_api,
+        :graphql
+      ]
+    ]
   ]
 
 config :tunez,
