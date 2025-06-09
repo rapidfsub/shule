@@ -33,6 +33,7 @@ defmodule Tunez.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps() do
     [
+      {:absinthe_phoenix, ">= 0.0.0"},
       {:open_api_spex, ">= 0.0.0"}
     ]
   end
@@ -40,6 +41,7 @@ defmodule Tunez.MixProject do
   defp ash_deps() do
     [
       {:ash, ">= 0.0.0"},
+      {:ash_graphql, ">= 0.0.0"},
       {:ash_json_api, ">= 0.0.0"},
       {:ash_phoenix, ">= 0.0.0"},
       {:ash_postgres, ">= 0.0.0"}

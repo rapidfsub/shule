@@ -11,6 +11,8 @@ config :ash,
   read_action_after_action_hooks_in_order?: true,
   bulk_actions_default_to_errors?: true
 
+config :ash_graphql, authorize_update_destroy_with_error?: true
+
 config :ash_json_api,
   show_public_calculations_when_loaded?: false,
   authorize_update_destroy_with_error?: true
@@ -39,7 +41,8 @@ config :spark,
         :calculations,
         :aggregates,
         :identities,
-        :json_api
+        :json_api,
+        :graphql
       ]
     ],
     "Ash.Domain": [
@@ -50,7 +53,8 @@ config :spark,
         :domain,
         :execution,
         :forms,
-        :json_api
+        :json_api,
+        :graphql
       ]
     ]
   ]
