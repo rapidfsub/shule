@@ -20,6 +20,10 @@ defmodule Tunez.Music.Artist do
       primary? true
       accept [:name, :biography]
     end
+
+    destroy :destroy do
+      primary? true
+    end
   end
 
   attributes do
