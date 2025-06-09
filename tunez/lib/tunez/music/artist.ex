@@ -1,5 +1,9 @@
 defmodule Tunez.Music.Artist do
-  use Ash.Resource, otp_app: :tunez, domain: Tunez.Music, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :tunez,
+    domain: Tunez.Music,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshJsonApi.Resource]
 
   postgres do
     table "artists"
@@ -58,5 +62,9 @@ defmodule Tunez.Music.Artist do
     count :album_count, :albums, public?: true
     first :latest_album_year_released, :albums, :year_released, public?: true
     first :cover_image_url, :albums, :cover_image_url
+  end
+
+  json_api do
+    type "artist"
   end
 end
