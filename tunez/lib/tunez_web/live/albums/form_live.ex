@@ -2,13 +2,16 @@ defmodule TunezWeb.Albums.FormLive do
   use TunezWeb, :live_view
 
   def mount(%{"id" => album_id}, _session, socket) do
-    album = Tunez.Music.get_album_by_id!(album_id)
+    album = Tunez.Music.get_album_by_id!(album_id, load: [:artist])
     form = Tunez.Music.form_to_update_album(album)
 
     socket =
       socket
-      |> assign(:form, to_form(form))
-      |> assign(:page_title, "Update Album")
+      |> assign(
+        form: to_form(form),
+        page_title: "Update Album",
+        artist: album.artist
+      )
 
     {:ok, socket}
   end

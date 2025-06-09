@@ -13,7 +13,7 @@ defmodule Tunez.Music.Album do
       accept [:name, :year_released, :cover_image_url, :artist_id]
     end
 
-    create :update do
+    update :update do
       accept [:name, :year_released, :cover_image_url]
     end
   end
