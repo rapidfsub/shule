@@ -84,8 +84,8 @@ defmodule Tunez.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "run priv/repo/seeds.exs"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "seed"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "seed"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
@@ -94,7 +94,8 @@ defmodule Tunez.MixProject do
         "tailwind tunez --minify",
         "esbuild tunez --minify",
         "phx.digest"
-      ]
+      ],
+      seed: ["run priv/repo/seeds/01-artists.exs"]
     ]
   end
 end
