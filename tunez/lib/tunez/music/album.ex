@@ -22,13 +22,15 @@ defmodule Tunez.Music.Album do
     validate compare(:year_released,
                greater_than: 1950,
                less_than_or_equal_to: &__MODULE__.next_year/0
-             ),
-             where: present(:year_released),
-             message: "must be between 1950 and next year"
+             ) do
+      where present(:year_released)
+      message "must be between 1950 and next year"
+    end
 
-    validate match(:cover_image_url, ~S[^(https://|/images/).+(\.png|\.jpg)$]),
-      where: changing(:cover_image_url),
-      message: "must start with https:// or /images/"
+    validate match(:cover_image_url, ~S[^(https://|/images/).+(\.png|\.jpg)$]) do
+      where changing(:cover_image_url)
+      message "must start with https:// or /images/"
+    end
   end
 
   attributes do
@@ -41,6 +43,12 @@ defmodule Tunez.Music.Album do
 
   relationships do
     belongs_to :artist, Tunez.Music.Artist, allow_nil?: false
+  end
+
+  identities do
+    identity :unique_album_names_per_artist, [:name, :artist_id] do
+      message "already exists for this artist"
+    end
   end
 
   def next_year() do
