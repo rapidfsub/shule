@@ -24,4 +24,16 @@ defmodule Tunez.Music do
   forms do
     form :create_album, args: [:artist_id]
   end
+
+  json_api do
+    routes do
+      base_route "/artists", Tunez.Music.Artist do
+        get :read
+        index :search
+        post :create
+        patch :update
+        delete :destroy
+      end
+    end
+  end
 end
