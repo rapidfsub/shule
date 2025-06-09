@@ -3,7 +3,7 @@ defmodule Tunez.Music.Album do
     otp_app: :tunez,
     domain: Tunez.Music,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshJsonApi.Resource]
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
 
   postgres do
     table "albums"
@@ -65,5 +65,9 @@ defmodule Tunez.Music.Album do
 
   json_api do
     type "album"
+  end
+
+  graphql do
+    type :album
   end
 end
