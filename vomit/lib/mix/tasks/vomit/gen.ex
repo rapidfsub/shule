@@ -11,8 +11,7 @@ defmodule Mix.Tasks.Vomit.Gen do
       hash = :erlang.phash2(spec)
 
       if old_code_info.hash != hash do
-        File.write!(path, get_new_code_str(spec, old_code_info, hash))
-        File.write!(path, "\n", [:append])
+        get_new_code_str(spec, old_code_info, hash) |> write_file(path)
       end
     end
   end
@@ -24,8 +23,7 @@ defmodule Mix.Tasks.Vomit.Gen do
       code
     else
       module = Keyword.fetch!(spec, :module) |> List.wrap() |> Module.concat()
-      File.write!(path, generate_base_code_str(module))
-      File.write!(path, "\n", [:append])
+      generate_base_code_str(module) |> write_file(path)
       do_get_old_code_info(path)
     end
   end
@@ -99,16 +97,12 @@ defmodule Mix.Tasks.Vomit.Gen do
   end
 
   defp get_new_code_str(spec, code_info, hash) do
-    guide = Keyword.fetch!(spec, :guide)
-    Code.ensure_loaded!(guide)
-
     code_info.quoted
     |> Macro.prewalk(fn
       {:__block__, meta, children} = ast ->
         if meta[:vomit_target] do
           {front, _gen} = Enum.split(children, code_info.start_index + 1)
           {_gen, back} = Enum.split(children, code_info.end_index)
-          opts = Keyword.fetch!(spec, :opts)
 
           quoted_hash =
             quote do
@@ -117,7 +111,7 @@ defmodule Mix.Tasks.Vomit.Gen do
               end
             end
 
-          {:__block__, meta, front ++ [quoted_hash] ++ get_vomit(guide, opts) ++ back}
+          {:__block__, meta, front ++ [quoted_hash] ++ get_vomit(spec) ++ back}
         else
           ast
         end
@@ -129,8 +123,12 @@ defmodule Mix.Tasks.Vomit.Gen do
     |> Code.format_string!()
   end
 
-  defp get_vomit(guide, opts) do
+  defp get_vomit(spec) do
+    guide = Keyword.fetch!(spec, :guide)
+    Code.ensure_loaded!(guide)
+
     attrs = guide.__info__(:attributes)
+    opts = Keyword.fetch!(spec, :opts)
 
     for vomit <- Keyword.get_values(attrs, :vomit) |> List.flatten(),
         ast = apply(guide, vomit, [opts]) do
@@ -142,5 +140,10 @@ defmodule Mix.Tasks.Vomit.Gen do
       {:__block__, _meta, vomits} -> vomits
       vomit -> [vomit]
     end
+  end
+
+  defp write_file(content, path) do
+    File.write!(path, content)
+    File.write!(path, "\n", [:append])
   end
 end
