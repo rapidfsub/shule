@@ -69,7 +69,7 @@ defmodule Mix.Tasks.Vomit.Gen do
       end)
       |> case do
         {_ast, nil} -> nil
-        {ast, acc} -> Map.merge(acc, %{quoted: ast})
+        {ast, acc} -> Map.put(acc, :quoted, ast)
       end
     else
       _ -> nil
