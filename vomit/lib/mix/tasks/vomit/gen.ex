@@ -5,26 +5,43 @@ defmodule Mix.Tasks.Vomit.Gen do
     registry = Module.concat([reg])
     Code.ensure_loaded!(registry)
 
-    for spec <- registry.specs() do
-      path = Keyword.fetch!(spec, :path)
-      old_code_info = get_old_code_info(spec, path)
-      hash = :erlang.phash2(spec)
+    for raw_spec <- registry.specs() do
+      spec = get_spec(raw_spec)
+      old_code_info = get_old_code_info(spec)
 
-      if old_code_info.hash != hash do
-        get_new_code_str(spec, old_code_info, hash) |> write_file(path)
+      if old_code_info.hash != spec.hash do
+        get_new_code_str(spec, old_code_info) |> write_file(spec.path)
       end
     end
   end
 
-  defp get_old_code_info(spec, path) do
-    code = do_get_old_code_info(path)
+  defp get_spec(raw_spec) do
+    guide = Keyword.fetch!(raw_spec, :guide)
+    Code.ensure_loaded!(guide)
 
-    if code do
-      code
+    vomit =
+      guide.__info__(:attributes)
+      |> Keyword.get_values(:vomit)
+      |> List.flatten()
+
+    %{
+      path: Keyword.fetch!(raw_spec, :path),
+      module: Keyword.fetch!(raw_spec, :module) |> List.wrap() |> Module.concat(),
+      guide: guide,
+      vomit: vomit,
+      opts: Keyword.fetch!(raw_spec, :opts),
+      hash: :erlang.phash2(raw_spec)
+    }
+  end
+
+  defp get_old_code_info(spec) do
+    result = do_get_old_code_info(spec.path)
+
+    if result do
+      result
     else
-      module = Keyword.fetch!(spec, :module) |> List.wrap() |> Module.concat()
-      generate_base_code_str(module) |> write_file(path)
-      do_get_old_code_info(path)
+      generate_base_code_str(spec.module) |> write_file(spec.path)
+      do_get_old_code_info(spec.path)
     end
   end
 
@@ -96,7 +113,7 @@ defmodule Mix.Tasks.Vomit.Gen do
     |> Code.format_string!()
   end
 
-  defp get_new_code_str(spec, code_info, hash) do
+  defp get_new_code_str(spec, code_info) do
     code_info.quoted
     |> Macro.prewalk(fn
       {:__block__, meta, children} = ast ->
@@ -107,7 +124,7 @@ defmodule Mix.Tasks.Vomit.Gen do
           quoted_hash =
             quote do
               mark do
-                {:hash, unquote(hash)}
+                {:hash, unquote(spec.hash)}
               end
             end
 
@@ -124,14 +141,7 @@ defmodule Mix.Tasks.Vomit.Gen do
   end
 
   defp get_vomit(spec) do
-    guide = Keyword.fetch!(spec, :guide)
-    Code.ensure_loaded!(guide)
-
-    attrs = guide.__info__(:attributes)
-    opts = Keyword.fetch!(spec, :opts)
-
-    for vomit <- Keyword.get_values(attrs, :vomit) |> List.flatten(),
-        ast = apply(guide, vomit, [opts]) do
+    for vomit <- spec.vomit, ast = apply(spec.guide, vomit, [spec.opts]) do
       Macro.to_string(ast)
     end
     |> Enum.join("\n\n")
