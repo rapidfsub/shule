@@ -18,4 +18,14 @@ defmodule Example.Guide do
       end
     end
   end
+
+  def define_add(opts) do
+    offset = Keyword.get(opts, :offset, 1)
+
+    quote do
+      def add(x) do
+        x + unquote(offset)
+      end
+    end
+  end
 end

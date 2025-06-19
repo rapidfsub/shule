@@ -9,7 +9,7 @@ defmodule Vomit.Guide do
   end
 
   defmacro __using__(opts) do
-    {args, _opts} = Keyword.pop(opts, :args, quote(do: [%{}]))
+    {args, _opts} = Keyword.pop(opts, :args, quote(do: []))
 
     quote do
       @args unquote(args)

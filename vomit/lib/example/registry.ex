@@ -11,7 +11,7 @@ defmodule Example.Registry do
         guide: Example.Guide,
         path: "hello_world.ex",
         module: "Example.HelloWorld",
-        opts: [world: true]
+        opts: [world: true, offset: 2]
       ]
     ]
 end
