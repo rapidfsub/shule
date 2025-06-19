@@ -3,7 +3,7 @@ defmodule Vomit.Registry do
   @callback specs() :: [spec()]
 
   defmacro __using__(opts) do
-    dirname = __CALLER__.file |> Path.dirname()
+    dirname = Path.dirname(__CALLER__.file)
 
     specs =
       for spec <- Keyword.fetch!(opts, :specs) do
