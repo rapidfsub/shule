@@ -7,8 +7,7 @@ defmodule Mix.Tasks.Vomit.Gen do
 
     for spec <- registry.specs() do
       path = Keyword.fetch!(spec, :path)
-      module = Keyword.fetch!(spec, :module) |> List.wrap() |> Module.concat()
-      old_code_info = get_old_code_info(path, module)
+      old_code_info = get_old_code_info(spec, path)
       hash = :erlang.phash2(spec)
 
       if old_code_info.hash != hash do
@@ -18,12 +17,13 @@ defmodule Mix.Tasks.Vomit.Gen do
     end
   end
 
-  defp get_old_code_info(path, module) do
+  defp get_old_code_info(spec, path) do
     code = do_get_old_code_info(path)
 
     if code do
       code
     else
+      module = Keyword.fetch!(spec, :module) |> List.wrap() |> Module.concat()
       File.write!(path, generate_base_code_str(module))
       File.write!(path, "\n", [:append])
       do_get_old_code_info(path)
@@ -59,7 +59,7 @@ defmodule Mix.Tasks.Vomit.Gen do
       end)
       |> case do
         {_ast, nil} -> nil
-        {ast, acc} -> Map.put(acc, :quoted, ast)
+        {ast, acc} -> Map.merge(acc, %{quoted: ast})
       end
     else
       _ -> nil
