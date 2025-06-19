@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Vomit.Gen do
     for spec <- registry.specs() do
       guide = Keyword.fetch!(spec, :guide)
       path = Keyword.fetch!(spec, :path)
-      args = Keyword.fetch!(spec, :args)
+      opts = Keyword.fetch!(spec, :opts)
       attrs = guide.__info__(:attributes)
       module = Keyword.fetch!(spec, :module) |> List.wrap() |> Module.concat()
 
@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Vomit.Gen do
 
       {:__block__, _meta, vomits} =
         for vomit <- Keyword.get_values(attrs, :vomit) |> List.flatten() do
-          case apply(guide, vomit, args) do
+          case apply(guide, vomit, [opts]) do
             nil -> ""
             ast -> Macro.to_string(ast)
           end

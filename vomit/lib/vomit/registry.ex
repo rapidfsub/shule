@@ -1,5 +1,5 @@
 defmodule Vomit.Registry do
-  @type spec() :: [guide: module(), path: binary(), module: binary(), args: [term()]]
+  @type spec() :: [guide: module(), path: binary(), module: binary(), opts: keyword()]
   @callback specs() :: [spec()]
 
   defmacro __using__(opts) do
