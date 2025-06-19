@@ -5,28 +5,43 @@ defmodule Mix.Tasks.Vomit.Gen do
     registry = Module.concat([reg])
     Code.ensure_loaded!(registry)
 
-    for spec <- registry.specs() do
-      path = Keyword.fetch!(spec, :path)
-      old_code_info = get_old_code_info(spec, path)
-      hash = :erlang.phash2(spec)
+    for raw_spec <- registry.specs() do
+      spec = get_spec(raw_spec)
+      old_code_info = get_old_code_info(spec)
 
-      if old_code_info.hash != hash do
-        File.write!(path, get_new_code_str(spec, old_code_info, hash))
-        File.write!(path, "\n", [:append])
+      if old_code_info.hash != spec.hash do
+        get_new_code_str(spec, old_code_info) |> write_file(spec.path)
       end
     end
   end
 
-  defp get_old_code_info(spec, path) do
-    code = do_get_old_code_info(path)
+  defp get_spec(raw_spec) do
+    guide = Keyword.fetch!(raw_spec, :guide)
+    Code.ensure_loaded!(guide)
 
-    if code do
-      code
+    vomit =
+      guide.__info__(:attributes)
+      |> Keyword.get_values(:vomit)
+      |> List.flatten()
+
+    %{
+      path: Keyword.fetch!(raw_spec, :path),
+      module: [Keyword.fetch!(raw_spec, :module)] |> Module.concat(),
+      guide: guide,
+      vomit: vomit,
+      opts: Keyword.fetch!(raw_spec, :opts),
+      hash: :erlang.phash2(raw_spec)
+    }
+  end
+
+  defp get_old_code_info(spec) do
+    result = do_get_old_code_info(spec.path)
+
+    if result do
+      result
     else
-      module = Keyword.fetch!(spec, :module) |> List.wrap() |> Module.concat()
-      File.write!(path, generate_base_code_str(module))
-      File.write!(path, "\n", [:append])
-      do_get_old_code_info(path)
+      generate_base_code_str(spec.module) |> write_file(spec.path)
+      do_get_old_code_info(spec.path)
     end
   end
 
@@ -36,17 +51,12 @@ defmodule Mix.Tasks.Vomit.Gen do
       quoted
       |> Macro.prewalk(nil, fn
         {:__block__, meta, children} = ast, nil ->
-          start_index = find_marker_index(children, &(&1 == :gen_begin))
-          end_index = find_marker_index(children, &(&1 == :gen_end))
+          start_index = get_marker_index(children, &(&1 == :gen_begin))
+          end_index = get_marker_index(children, &(&1 == :gen_end))
 
           if start_index && end_index do
-            hash =
-              find_marker_value(children, fn
-                {:hash, hash} -> hash
-                _ -> nil
-              end)
-
-            meta = Keyword.put(meta, :vomit_target, true)
+            hash = get_marker_value(children, :hash)
+            meta = Keyword.put(meta, :vomit, true)
 
             {{:__block__, meta, children},
              %{start_index: start_index, end_index: end_index, hash: hash}}
@@ -59,23 +69,23 @@ defmodule Mix.Tasks.Vomit.Gen do
       end)
       |> case do
         {_ast, nil} -> nil
-        {ast, acc} -> Map.merge(acc, %{quoted: ast})
+        {ast, acc} -> Map.put(acc, :quoted, ast)
       end
     else
       _ -> nil
     end
   end
 
-  defp find_marker_index(nodes, pred) do
+  defp get_marker_index(nodes, pred) do
     Enum.find_index(nodes, fn
       {:mark, _meta, [[do: marker]]} -> pred.(marker)
       _ -> false
     end)
   end
 
-  defp find_marker_value(nodes, fun) do
+  defp get_marker_value(nodes, key) do
     Enum.find_value(nodes, fn
-      {:mark, _meta, [[do: marker]]} -> fun.(marker)
+      {:mark, _meta, [[do: {^key, value}]]} -> value
       _ -> nil
     end)
   end
@@ -98,26 +108,14 @@ defmodule Mix.Tasks.Vomit.Gen do
     |> Code.format_string!()
   end
 
-  defp get_new_code_str(spec, code_info, hash) do
-    guide = Keyword.fetch!(spec, :guide)
-    Code.ensure_loaded!(guide)
-
+  defp get_new_code_str(spec, code_info) do
     code_info.quoted
     |> Macro.prewalk(fn
       {:__block__, meta, children} = ast ->
-        if meta[:vomit_target] do
+        if meta[:vomit] do
           {front, _gen} = Enum.split(children, code_info.start_index + 1)
           {_gen, back} = Enum.split(children, code_info.end_index)
-          opts = Keyword.fetch!(spec, :opts)
-
-          quoted_hash =
-            quote do
-              mark do
-                {:hash, unquote(hash)}
-              end
-            end
-
-          {:__block__, meta, front ++ [quoted_hash] ++ get_vomit(guide, opts) ++ back}
+          {:__block__, meta, front ++ [get_quoted_hash(spec.hash)] ++ get_vomit(spec) ++ back}
         else
           ast
         end
@@ -129,11 +127,16 @@ defmodule Mix.Tasks.Vomit.Gen do
     |> Code.format_string!()
   end
 
-  defp get_vomit(guide, opts) do
-    attrs = guide.__info__(:attributes)
+  defp get_quoted_hash(hash) do
+    quote do
+      mark do
+        {:hash, unquote(hash)}
+      end
+    end
+  end
 
-    for vomit <- Keyword.get_values(attrs, :vomit) |> List.flatten(),
-        ast = apply(guide, vomit, [opts]) do
+  defp get_vomit(spec) do
+    for vomit <- spec.vomit, ast = apply(spec.guide, vomit, [spec.opts]) do
       Macro.to_string(ast)
     end
     |> Enum.join("\n\n")
@@ -142,5 +145,10 @@ defmodule Mix.Tasks.Vomit.Gen do
       {:__block__, _meta, vomits} -> vomits
       vomit -> [vomit]
     end
+  end
+
+  defp write_file(content, path) do
+    File.write!(path, content)
+    File.write!(path, "\n", [:append])
   end
 end
