@@ -51,16 +51,11 @@ defmodule Mix.Tasks.Vomit.Gen do
       quoted
       |> Macro.prewalk(nil, fn
         {:__block__, meta, children} = ast, nil ->
-          start_index = find_marker_index(children, &(&1 == :gen_begin))
-          end_index = find_marker_index(children, &(&1 == :gen_end))
+          start_index = get_marker_index(children, &(&1 == :gen_begin))
+          end_index = get_marker_index(children, &(&1 == :gen_end))
 
           if start_index && end_index do
-            hash =
-              find_marker_value(children, fn
-                {:hash, hash} -> hash
-                _ -> nil
-              end)
-
+            hash = get_marker_value(children, :hash)
             meta = Keyword.put(meta, :vomit, true)
 
             {{:__block__, meta, children},
@@ -81,16 +76,16 @@ defmodule Mix.Tasks.Vomit.Gen do
     end
   end
 
-  defp find_marker_index(nodes, pred) do
+  defp get_marker_index(nodes, pred) do
     Enum.find_index(nodes, fn
       {:mark, _meta, [[do: marker]]} -> pred.(marker)
       _ -> false
     end)
   end
 
-  defp find_marker_value(nodes, fun) do
+  defp get_marker_value(nodes, key) do
     Enum.find_value(nodes, fn
-      {:mark, _meta, [[do: marker]]} -> fun.(marker)
+      {:mark, _meta, [[do: {^key, value}]]} -> value
       _ -> nil
     end)
   end
