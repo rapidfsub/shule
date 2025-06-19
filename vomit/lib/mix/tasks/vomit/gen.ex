@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Vomit.Gen do
 
     %{
       path: Keyword.fetch!(raw_spec, :path),
-      module: Keyword.fetch!(raw_spec, :module) |> List.wrap() |> Module.concat(),
+      module: [Keyword.fetch!(raw_spec, :module)] |> Module.concat(),
       guide: guide,
       vomit: vomit,
       opts: Keyword.fetch!(raw_spec, :opts),
@@ -61,7 +61,7 @@ defmodule Mix.Tasks.Vomit.Gen do
                 _ -> nil
               end)
 
-            meta = Keyword.put(meta, :vomit_target, true)
+            meta = Keyword.put(meta, :vomit, true)
 
             {{:__block__, meta, children},
              %{start_index: start_index, end_index: end_index, hash: hash}}
@@ -117,18 +117,10 @@ defmodule Mix.Tasks.Vomit.Gen do
     code_info.quoted
     |> Macro.prewalk(fn
       {:__block__, meta, children} = ast ->
-        if meta[:vomit_target] do
+        if meta[:vomit] do
           {front, _gen} = Enum.split(children, code_info.start_index + 1)
           {_gen, back} = Enum.split(children, code_info.end_index)
-
-          quoted_hash =
-            quote do
-              mark do
-                {:hash, unquote(spec.hash)}
-              end
-            end
-
-          {:__block__, meta, front ++ [quoted_hash] ++ get_vomit(spec) ++ back}
+          {:__block__, meta, front ++ [get_quoted_hash(spec.hash)] ++ get_vomit(spec) ++ back}
         else
           ast
         end
@@ -138,6 +130,14 @@ defmodule Mix.Tasks.Vomit.Gen do
     end)
     |> Macro.to_string()
     |> Code.format_string!()
+  end
+
+  defp get_quoted_hash(hash) do
+    quote do
+      mark do
+        {:hash, unquote(hash)}
+      end
+    end
   end
 
   defp get_vomit(spec) do
