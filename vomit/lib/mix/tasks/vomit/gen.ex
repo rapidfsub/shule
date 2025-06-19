@@ -7,6 +7,8 @@ defmodule Mix.Tasks.Vomit.Gen do
 
     for spec <- registry.specs() do
       guide = Keyword.fetch!(spec, :guide)
+      Code.ensure_loaded!(guide)
+
       path = Keyword.fetch!(spec, :path)
       opts = Keyword.fetch!(spec, :opts)
       attrs = guide.__info__(:attributes)
@@ -28,7 +30,7 @@ defmodule Mix.Tasks.Vomit.Gen do
         File.write!(path, "\n", [:append])
       end
 
-      {:__block__, _meta, vomits} =
+      vomits =
         for vomit <- Keyword.get_values(attrs, :vomit) |> List.flatten() do
           case apply(guide, vomit, [opts]) do
             nil -> ""
@@ -37,6 +39,10 @@ defmodule Mix.Tasks.Vomit.Gen do
         end
         |> Enum.join("\n\n")
         |> Code.string_to_quoted!()
+        |> case do
+          {:__block__, _meta, vomits} -> vomits
+          vomit -> [vomit]
+        end
 
       new_code =
         File.read!(path)
