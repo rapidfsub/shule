@@ -19,8 +19,14 @@ defmodule Mix.Tasks.Vomit.Gen do
           quote do
             defmodule unquote(module) do
               use Vomit.Marker
-              mark(:gen_begin)
-              mark(:gen_end)
+
+              mark do
+                :gen_begin
+              end
+
+              mark do
+                :gen_end
+              end
             end
           end
           |> Macro.to_string()
@@ -50,9 +56,9 @@ defmodule Mix.Tasks.Vomit.Gen do
         |> Macro.prewalk(fn
           {:__block__, meta, children} = ast ->
             with {first, [start | rest]} <-
-                   Enum.split_while(children, &(!match?({:mark, _meta, [:gen_begin]}, &1))),
+                   Enum.split_while(children, &(!match?({:mark, _meta, [[do: :gen_begin]]}, &1))),
                  {_gen, last} <-
-                   Enum.split_while(rest, &(!match?({:mark, _meta, [:gen_end]}, &1))) do
+                   Enum.split_while(rest, &(!match?({:mark, _meta, [[do: :gen_end]]}, &1))) do
               {:__block__, meta, first ++ [start] ++ vomits ++ last}
             else
               _ -> ast
