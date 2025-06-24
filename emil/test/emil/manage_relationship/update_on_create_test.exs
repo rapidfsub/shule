@@ -37,18 +37,17 @@ defmodule ThisTest.Pay do
       primary? true
       accept :*
       argument :deposit_id, :uuid_v7, allow_nil?: false
-      argument :deposit, :map, public?: false
 
-      change fn changeset, context ->
-        deposit = %{
-          id: Changeset.get_argument(changeset, :deposit_id),
-          offset: -Changeset.get_attribute(changeset, :amount)
-        }
+      change before_action(fn changeset, context ->
+               deposit = %{
+                 id: Changeset.get_argument(changeset, :deposit_id),
+                 offset: -Changeset.get_attribute(changeset, :amount)
+               }
 
-        Changeset.set_argument(changeset, :deposit, deposit)
-      end
-
-      change manage_relationship(:deposit, on_lookup: {:relate_and_update, :add_amount})
+               Changeset.manage_relationship(changeset, :deposit, deposit,
+                 on_lookup: {:relate_and_update, :add_amount}
+               )
+             end)
     end
   end
 
