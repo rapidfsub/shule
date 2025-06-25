@@ -17,7 +17,9 @@ defmodule ShouWeb.Router do
   scope "/", ShouWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live_session :default do
+      live "/", HomeLive
+    end
   end
 
   # Other scopes may use custom stacks.
