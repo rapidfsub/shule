@@ -43,9 +43,9 @@ defmodule ShouWeb.TomSelect do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("load", %{"query" => query}, socket) do
-    items = socket.assigns.load_fun.(query)
-    {:reply, %{items: items}, socket}
+  def handle_event("load", %{"query" => query, "keyset" => keyset}, socket) do
+    payload = socket.assigns.load_fun.(query, keyset)
+    {:reply, payload, socket}
   end
 
   defp push_settings(socket, assigns) do
