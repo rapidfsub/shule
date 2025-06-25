@@ -2,6 +2,7 @@ defmodule ShouWeb.TomSelect do
   use ShouWeb, :live_component
 
   attr :id, :string, required: true
+  attr :load_fun, :any, default: nil
   attr :tom_select_settings, :map, default: %{}
 
   def new(assigns) do
@@ -38,5 +39,11 @@ defmodule ShouWeb.TomSelect do
       <select></select>
     </div>
     """
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("load", %{"query" => query}, socket) do
+    items = socket.assigns.load_fun.(query)
+    {:reply, %{items: items}, socket}
   end
 end
