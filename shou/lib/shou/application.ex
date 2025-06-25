@@ -7,6 +7,8 @@ defmodule Shou.Application do
 
   @impl true
   def start(_type, _args) do
+    seed()
+
     children = [
       ShouWeb.Telemetry,
       # Shou.Repo,
@@ -30,5 +32,11 @@ defmodule Shou.Application do
   def config_change(changed, _new, removed) do
     ShouWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp seed() do
+    for i <- 1..500 do
+      Shou.Domain.create_obj!(%{name: "Obj #{i}"})
+    end
   end
 end
