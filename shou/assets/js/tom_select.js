@@ -7,7 +7,7 @@ export default {
     this.tomSelect = new TomSelect(select, settings);
   },
   getSettings() {
-    const keys = ["create"]
+    const keys = ["create", "createOnBlur", "persist"]
     const result = {}
     for (const [key, value] of Object.entries(this.el.dataset)) {
       if (keys.includes(key)) {
