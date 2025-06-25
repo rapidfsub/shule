@@ -2,6 +2,7 @@ defmodule ShouWeb.TomSelect do
   use ShouWeb, :live_component
 
   attr :id, :string, required: true
+  attr :create, :boolean, default: false
 
   def new(assigns) do
     assigns = assigns |> assign(module: __MODULE__)
@@ -20,7 +21,7 @@ defmodule ShouWeb.TomSelect do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div id={@id} phx-hook="TomSelect">
+    <div id={@id} phx-hook="TomSelect" data-create={to_string(@create)}>
       <select></select>
     </div>
     """

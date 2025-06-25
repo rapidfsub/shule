@@ -10,7 +10,7 @@ defmodule ShouWeb.HomeLive do
   def render(assigns) do
     ~H"""
     <div class="p-8 flex flex-col items-start">
-      <ShouWeb.TomSelect.new id="tom_select" />
+      <ShouWeb.TomSelect.new id="tom_select" create />
     </div>
     """
   end
