@@ -9,7 +9,7 @@ defmodule Shou.Application do
   def start(_type, _args) do
     children = [
       ShouWeb.Telemetry,
-      Shou.Repo,
+      # Shou.Repo,
       {DNSCluster, query: Application.get_env(:shou, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Shou.PubSub},
       # Start a worker by calling: Shou.Worker.start_link(arg)
