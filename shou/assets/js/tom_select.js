@@ -1,5 +1,8 @@
+import TomSelect from "tom-select"
+
 export default {
   mounted() {
-    console.log("mounted", this.el)
+    const select = this.el.querySelector("select")
+    this.tomSelect = new TomSelect(select, {});
   }
 }

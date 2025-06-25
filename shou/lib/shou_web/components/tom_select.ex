@@ -21,7 +21,7 @@ defmodule ShouWeb.TomSelect do
   def render(assigns) do
     ~H"""
     <div id={@id} phx-hook="TomSelect">
-      <input />
+      <select></select>
     </div>
     """
   end
