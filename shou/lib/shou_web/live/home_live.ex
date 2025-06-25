@@ -9,7 +9,7 @@ defmodule ShouWeb.HomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="p-8">
+    <div class="p-8 flex flex-col items-start">
       <ShouWeb.TomSelect.new id="tom_select" />
     </div>
     """
