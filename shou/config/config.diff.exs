@@ -34,3 +34,5 @@ config :spark,
     ],
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
+
+config :shou, ash_domains: [Shou.Domain]
