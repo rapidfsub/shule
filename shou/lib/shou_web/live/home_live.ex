@@ -12,23 +12,15 @@ defmodule ShouWeb.HomeLive do
     <div class="p-8 flex flex-col items-start">
       <ShouWeb.TomSelect.new
         id="tom_select"
-        tom_select_settings={
-          %{
-            create: true,
-            persist: true,
-            createOnBlur: true,
-            valueField: "id",
-            labelField: "name",
-            searchField: "name"
-          }
-        }
+        tom_select_settings={%{create: true, persist: true, createOnBlur: true}}
         load_fun={
           fn _query ->
             for i <- 1..10 do
-              %{id: i, name: "Item #{i}"}
+              %{text: "Item #{i}", value: i}
             end
           end
         }
+        is_remote
       />
     </div>
     """

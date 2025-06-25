@@ -2,6 +2,7 @@ defmodule ShouWeb.TomSelect do
   use ShouWeb, :live_component
 
   attr :id, :string, required: true
+  attr :is_remote, :boolean, default: false
   attr :load_fun, :any, default: nil
   attr :tom_select_settings, :map, default: %{}
 
@@ -25,7 +26,7 @@ defmodule ShouWeb.TomSelect do
       if assigns.tom_select_settings == socket.assigns.tom_select_settings do
         socket
       else
-        socket |> push_event("#{assigns.id}:settings", assigns.tom_select_settings)
+        socket |> push_settings(assigns)
       end
 
     socket = socket |> assign(assigns)
@@ -45,5 +46,28 @@ defmodule ShouWeb.TomSelect do
   def handle_event("load", %{"query" => query}, socket) do
     items = socket.assigns.load_fun.(query)
     {:reply, %{items: items}, socket}
+  end
+
+  defp push_settings(socket, assigns) do
+    payload =
+      convert_keys(%{
+        settings: assigns.tom_select_settings,
+        is_remote: assigns.is_remote
+      })
+
+    socket |> push_event("#{assigns.id}:settings", payload)
+  end
+
+  defp convert_keys(map) do
+    for {k, v} <- map, into: %{} do
+      {lower_camelize(k), v}
+    end
+  end
+
+  defp lower_camelize(text) do
+    text
+    |> to_string()
+    |> Macro.camelize()
+    |> String.replace(~r/^./, &String.downcase/1)
   end
 end
