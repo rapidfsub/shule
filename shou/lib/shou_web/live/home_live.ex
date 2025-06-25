@@ -10,7 +10,10 @@ defmodule ShouWeb.HomeLive do
   def render(assigns) do
     ~H"""
     <div class="p-8 flex flex-col items-start">
-      <ShouWeb.TomSelect.new id="tom_select" create persist create_on_blur />
+      <ShouWeb.TomSelect.new
+        id="tom_select"
+        tom_select_settings={%{create: true, persist: true, createOnBlur: true}}
+      />
     </div>
     """
   end
