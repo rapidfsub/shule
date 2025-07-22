@@ -36,7 +36,6 @@ defmodule ThisTest.Obj do
 end
 
 defmodule ThisTest do
-  alias Ash.Changeset
   use ExUnit.Case, async: true
 
   test "create action policy cannot reference attribute" do
