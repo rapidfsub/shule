@@ -1,4 +1,4 @@
-defmodule Emil.Repo.Migrations.Genesis do
+defmodule Emil.Repo.Migrations.MigrateResources1 do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
