@@ -2,6 +2,9 @@ defmodule Emil.SimpleDomain do
   use Ash.Domain
 
   resources do
+    resource Emil.AshPostgres.AggregateTest.Comment
+    resource Emil.AshPostgres.AggregateTest.Post
+
     resource Emil.SimpleDomain.Token
   end
 end
