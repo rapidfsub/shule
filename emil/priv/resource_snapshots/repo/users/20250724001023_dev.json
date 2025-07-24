@@ -2,7 +2,7 @@
   "attributes": [
     {
       "allow_nil?": false,
-      "default": "fragment(\"uuid_generate_v7()\")",
+      "default": "fragment(\"gen_random_uuid()\")",
       "generated?": false,
       "precision": null,
       "primary_key?": true,
@@ -17,15 +17,15 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": true,
-  "hash": "FA9DCC5EE64B96323C6DA67BFD5DB890ED340D4A96D7271596862E075B6A66BD",
+  "has_create_action": false,
+  "hash": "153860403C67E4779EEE1AEC13D04A89378854A6CD721A1B0691FEBD8BDA4317",
   "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
     "strategy": null
   },
-  "repo": "Elixir.Emil.TestRepo",
-  "schema": "aggregate_test",
-  "table": "post"
+  "repo": "Elixir.Emil.Repo",
+  "schema": null,
+  "table": "users"
 }

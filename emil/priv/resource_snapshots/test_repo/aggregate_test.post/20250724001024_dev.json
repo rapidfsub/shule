@@ -11,18 +11,6 @@
       "size": null,
       "source": "id",
       "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "precision": null,
-      "primary_key?": false,
-      "references": null,
-      "scale": null,
-      "size": null,
-      "source": "expires_at",
-      "type": "utc_datetime"
     }
   ],
   "base_filter": null,
@@ -30,7 +18,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "EFC5A908D7D5EA4317252F3CE6B4A2E846DDCBBA9FB6062B8F53D054FBBD7D8B",
+  "hash": "5361D507C7CA34171B177E82CB0CE862AC61A45A6BC11658EC5A7536B195D4C1",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -38,6 +26,6 @@
     "strategy": null
   },
   "repo": "Elixir.Emil.TestRepo",
-  "schema": null,
-  "table": "token"
+  "schema": "aggregate_test",
+  "table": "post"
 }
