@@ -3,7 +3,7 @@ use Emil.TestPrelude
 
 defmodule ThisTest.Token do
   use Ash.Resource,
-    domain: Emil.SimpleDomain,
+    domain: TestDomain,
     data_layer: AshPostgres.DataLayer
 
   actions do
