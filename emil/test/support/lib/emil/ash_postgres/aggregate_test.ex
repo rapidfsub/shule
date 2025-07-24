@@ -6,6 +6,8 @@ defmodule ThisTest.Post do
     domain: TestDomain,
     data_layer: AshPostgres.DataLayer
 
+  use AshPostgresHelper
+
   actions do
     defaults [:read, create: :*]
 
@@ -33,18 +35,14 @@ defmodule ThisTest.Post do
       filter expr(content == "invalid")
     end
   end
-
-  postgres do
-    table "post"
-    schema "aggregate_test"
-    repo Emil.TestRepo
-  end
 end
 
 defmodule ThisTest.Comment do
   use Ash.Resource,
     domain: Emil.TestDomain,
     data_layer: AshPostgres.DataLayer
+
+  use AshPostgresHelper
 
   actions do
     defaults [:read, create: :*]
@@ -57,11 +55,5 @@ defmodule ThisTest.Comment do
 
   relationships do
     belongs_to :post, ThisTest.Post, allow_nil?: false
-  end
-
-  postgres do
-    table "comment"
-    schema "aggregate_test"
-    repo Emil.TestRepo
   end
 end

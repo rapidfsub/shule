@@ -16,6 +16,8 @@ defmodule ThisTest.Token do
     domain: TestDomain,
     data_layer: AshPostgres.DataLayer
 
+  use AshPostgresHelper
+
   actions do
     defaults [:read, create: :*]
   end
@@ -33,11 +35,5 @@ defmodule ThisTest.Token do
     calculate :is_seoul_active, :boolean do
       calculation expr(expires_at > lazy({ThisTest.FakeDateTime, :seoul_now, []}))
     end
-  end
-
-  postgres do
-    table "token"
-    schema "expression_test"
-    repo Emil.TestRepo
   end
 end
