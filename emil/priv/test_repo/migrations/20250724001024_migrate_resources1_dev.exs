@@ -8,7 +8,9 @@ defmodule Emil.TestRepo.Migrations.MigrateResources1 do
   use Ecto.Migration
 
   def up do
-    create table(:token, primary_key: false) do
+    execute("CREATE SCHEMA IF NOT EXISTS expression_test")
+
+    create table(:token, primary_key: false, prefix: "expression_test") do
       add :id, :uuid, null: false, default: fragment("uuid_generate_v7()"), primary_key: true
       add :expires_at, :utc_datetime, null: false
     end
@@ -43,6 +45,6 @@ defmodule Emil.TestRepo.Migrations.MigrateResources1 do
 
     drop table(:post, prefix: "aggregate_test")
 
-    drop table(:token)
+    drop table(:token, prefix: "expression_test")
   end
 end

@@ -30,7 +30,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "50091597305372ECEDB68745381B9ED6C66F0BEBF4E16B5B834F98802F7C2E34",
+  "hash": "D3CAC95186DAFE7F278381C378E86BFEDD1A82763FE7BC3BD43862857F565315",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -38,6 +38,6 @@
     "strategy": null
   },
   "repo": "Elixir.Emil.TestRepo",
-  "schema": null,
+  "schema": "expression_test",
   "table": "token"
 }
