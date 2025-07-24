@@ -1,6 +1,16 @@
 alias Emil.AshPostgres.ExpressionTest, as: ThisTest
 use Emil.TestPrelude
 
+defmodule ThisTest.FakeDateTime do
+  def utc_now() do
+    ~U[2000-01-02 00:00:00Z]
+  end
+
+  def seoul_now() do
+    utc_now() |> DateTime.shift_zone!("Asia/Seoul")
+  end
+end
+
 defmodule ThisTest.Token do
   use Ash.Resource,
     domain: TestDomain,
@@ -17,11 +27,11 @@ defmodule ThisTest.Token do
 
   calculations do
     calculate :is_utc_active, :boolean do
-      calculation expr(expires_at > lazy({FakeDateTime, :utc_now, []}))
+      calculation expr(expires_at > lazy({ThisTest.FakeDateTime, :utc_now, []}))
     end
 
     calculate :is_seoul_active, :boolean do
-      calculation expr(expires_at > lazy({FakeDateTime, :seoul_now, []}))
+      calculation expr(expires_at > lazy({ThisTest.FakeDateTime, :seoul_now, []}))
     end
   end
 
