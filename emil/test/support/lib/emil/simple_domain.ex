@@ -4,7 +4,6 @@ defmodule Emil.SimpleDomain do
   resources do
     resource Emil.AshPostgres.AggregateTest.Comment
     resource Emil.AshPostgres.AggregateTest.Post
-
-    resource Emil.SimpleDomain.Token
+    resource Emil.AshPostgres.ExpressionTest.Token
   end
 end

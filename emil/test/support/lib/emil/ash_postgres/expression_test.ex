@@ -1,6 +1,7 @@
-defmodule Emil.SimpleDomain.Token do
-  use Emil.TestPrelude
+alias Emil.AshPostgres.ExpressionTest, as: ThisTest
+use Emil.TestPrelude
 
+defmodule ThisTest.Token do
   use Ash.Resource,
     domain: Emil.SimpleDomain,
     data_layer: AshPostgres.DataLayer
@@ -26,6 +27,7 @@ defmodule Emil.SimpleDomain.Token do
 
   postgres do
     table "token"
+    schema "expression_test"
     repo Emil.TestRepo
   end
 end

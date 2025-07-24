@@ -1,4 +1,4 @@
-alias Emil.ExpressionTest, as: ThisTest
+alias Emil.AshPostgres.ExpressionTest, as: ThisTest
 use Emil.TestPrelude
 
 defmodule ThisTest do
@@ -10,7 +10,7 @@ defmodule ThisTest do
     params = %{expires_at: FakeDateTime.utc_now() |> DateTime.shift(minute: 15)}
 
     obj =
-      Changeset.for_create(SimpleDomain.Token, :create, params)
+      Changeset.for_create(ThisTest.Token, :create, params)
       |> Ash.create!()
       |> Ash.load!([:is_utc_active, :is_seoul_active])
 
