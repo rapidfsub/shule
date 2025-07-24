@@ -2,27 +2,15 @@
   "attributes": [
     {
       "allow_nil?": false,
-      "default": "nil",
-      "generated?": true,
+      "default": "fragment(\"uuid_generate_v7()\")",
+      "generated?": false,
       "precision": null,
       "primary_key?": true,
       "references": null,
       "scale": null,
       "size": null,
       "source": "id",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "precision": null,
-      "primary_key?": false,
-      "references": null,
-      "scale": null,
-      "size": null,
-      "source": "name",
-      "type": "citext"
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -30,7 +18,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "4661B29A85E385E209726957C77D97101803AD9044D4708020286A543DE7766C",
+  "hash": "5361D507C7CA34171B177E82CB0CE862AC61A45A6BC11658EC5A7536B195D4C1",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -38,6 +26,6 @@
     "strategy": null
   },
   "repo": "Elixir.Emil.TestRepo",
-  "schema": null,
-  "table": "bot"
+  "schema": "aggregate_test",
+  "table": "post"
 }

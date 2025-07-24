@@ -11,8 +11,6 @@ config :emil, Emil.TestRepo,
 config :emil,
   ash_domains: [
     Emil.Accounts,
-    Emil.MarketCap,
-    Emil.SimpleDomain,
     Emil.TestDomain
   ],
   ecto_repos: [Emil.Repo, Emil.TestRepo],
