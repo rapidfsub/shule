@@ -34,26 +34,9 @@ defmodule Emil.TestRepo.Migrations.MigrateResources1 do
           ),
           null: false
     end
-
-    create table(:candle, primary_key: false) do
-      add :id, :bigserial, null: false, primary_key: true
-      add :open, :decimal, null: false
-      add :high, :decimal, null: false
-      add :low, :decimal, null: false
-      add :close, :decimal, null: false
-    end
-
-    create table(:bot, primary_key: false) do
-      add :id, :bigserial, null: false, primary_key: true
-      add :name, :citext, null: false
-    end
   end
 
   def down do
-    drop table(:bot)
-
-    drop table(:candle)
-
     drop constraint(:comment, "comment_post_id_fkey", prefix: "aggregate_test")
 
     drop table(:comment, prefix: "aggregate_test")
