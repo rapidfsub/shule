@@ -4,6 +4,7 @@ defmodule Emil.TestPrelude do
       use Emil.Prelude
 
       alias Emil.TestDomain
+      alias Emil.AshPostgresHelper
     end
   end
 end
