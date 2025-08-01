@@ -1,4 +1,5 @@
 #! /bin/sh
+
 rm -rf ./priv/repo/migrations
 rm -rf ./priv/test_repo
 rm -rf ./priv/resource_snapshots
