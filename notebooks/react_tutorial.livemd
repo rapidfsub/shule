@@ -1,0 +1,214 @@
+# React Tutorial
+
+```elixir
+Mix.install([
+  {:plug_cowboy, "~> 2.5"},
+  # {:jason, "~> 1.0"},
+  # {:phoenix, "~> 1.7.0"},
+  # {:phoenix_live_view, "~> 1.1"},
+  {:liveview_playground, "~> 0.1.8"}
+])
+```
+
+## Section
+
+```elixir
+defmodule Tic.Board do
+  @enforce_keys [:squares, :winner]
+  defstruct @enforce_keys
+
+  def new() do
+    %__MODULE__{squares: %{}, winner: nil}
+  end
+
+  def get_next_board(%__MODULE__{} = board, index, marker) do
+    with nil <- board.winner,
+         nil <- Map.get(board.squares, index) do
+      squares = Map.put(board.squares, index, marker)
+      winner = calculate_winner(squares)
+      {:ok, %__MODULE__{squares: squares, winner: winner}}
+    else
+      _ -> :error
+    end
+  end
+
+  @lines [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ]
+  defp calculate_winner(squares) do
+    Enum.find_value(@lines, fn line ->
+      case Enum.map(line, &squares[&1]) do
+        [marker, marker, marker] when not is_nil(marker) -> marker
+        _ -> nil
+      end
+    end)
+  end
+
+  def get_square(%__MODULE__{} = board, index) do
+    Map.get(board.squares, index) |> to_string()
+  end
+end
+```
+
+```elixir
+defmodule Tic.Game do
+  alias Tic.Board
+
+  @enforce_keys [:history, :current_move, :next_marker]
+  defstruct @enforce_keys
+
+  def new() do
+    %__MODULE__{
+      history: [Board.new()],
+      current_move: 0,
+      next_marker: get_next_marker(0)
+    }
+  end
+
+  def handle_play(%__MODULE__{} = game, index) when index in 0..8 do
+    game.history
+    |> Enum.fetch!(game.current_move)
+    |> Board.get_next_board(index, game.next_marker)
+    |> case do
+      {:ok, board} ->
+        current_move = game.current_move + 1
+        history = Enum.take(game.history, current_move) ++ [board]
+        next_marker = get_next_marker(current_move)
+        %__MODULE__{history: history, current_move: current_move, next_marker: next_marker}
+
+      :error ->
+        game
+    end
+  end
+
+  def jump_to(%__MODULE__{} = game, next_move) do
+    if game.current_move == next_move do
+      game
+    else
+      %{game | current_move: next_move, next_marker: get_next_marker(next_move)}
+    end
+  end
+
+  defp get_next_marker(current_move) do
+    if rem(current_move, 2) == 0 do
+      :x
+    else
+      :o
+    end
+  end
+end
+```
+
+```elixir
+defmodule PageLive do
+  use LiveviewPlaygroundWeb, :live_view
+
+  alias Phoenix.LiveView.JS
+  alias Tic.Board
+  alias Tic.Game
+
+  def mount(_params, _session, socket) do
+    socket = socket |> assign(game: Game.new())
+    {:ok, socket}
+  end
+
+  def render(assigns) do
+    game = assigns.game
+    board = Enum.fetch!(game.history, game.current_move)
+
+    status =
+      if board.winner do
+        "Winner: #{board.winner}"
+      else
+        "Next player: #{game.next_marker}"
+      end
+
+    assigns = assigns |> assign(board: board, status: status)
+
+    ~H"""
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <div class="p-8 flex gap-4">
+      <div>
+        <div class="status">
+          <%= @status %>
+        </div>
+        <.board board={@board} />
+      </div>
+      <div>
+        <ol>
+          <%= for {_, move} <- Enum.with_index(@game.history) do %>
+            <.move move={move} event={JS.push("jump", value: %{move: move})} />
+          <% end %>
+        </ol>
+      </div>
+    </div>
+    """
+  end
+
+  def handle_event("click", %{"index" => index}, socket) do
+    socket = socket |> update(:game, &Game.handle_play(&1, index))
+    {:noreply, socket}
+  end
+
+  def handle_event("jump", %{"move" => move}, socket) do
+    socket = socket |> update(:game, &Game.jump_to(&1, move))
+    {:noreply, socket}
+  end
+
+  attr(:board, Tic.Board, required: true)
+
+  defp board(assigns) do
+    ~H"""
+    <div>
+      <div :for={indices <- Enum.chunk_every(0..8, 3)} class="board-row flex">
+        <.square :for={index <- indices} event={JS.push("click", value: %{index: index})}>
+          <%= Board.get_square(@board, index) %>
+        </.square>
+      </div>
+    </div>
+    """
+  end
+
+  attr(:event, :any, required: true)
+  slot(:inner_block)
+
+  defp square(assigns) do
+    ~H"""
+    <button class="size-16 border-2" phx-click={@event}>
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
+  end
+
+  attr(:move, :integer, required: true)
+  attr(:event, :any, required: true)
+
+  defp move(assigns) do
+    description =
+      if assigns.move > 0 do
+        "Go to move ##{assigns.move}"
+      else
+        "Go to game start"
+      end
+
+    assigns = assigns |> assign(description: description)
+
+    ~H"""
+    <li key={@move}>
+      <button phx-click={@event}>
+        <%= @description %>
+      </button>
+    </li>
+    """
+  end
+end
+
+LiveviewPlayground.start()
+```
