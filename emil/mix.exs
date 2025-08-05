@@ -49,7 +49,7 @@ defmodule Emil.MixProject do
 
   defp local_deps() do
     [
-      {:mixin, path: "../mixin"}
+      {:mixin, path: "../eva/apps/mixin"}
     ]
   end
 
