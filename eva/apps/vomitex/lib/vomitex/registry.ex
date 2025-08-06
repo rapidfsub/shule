@@ -1,4 +1,4 @@
-defmodule Vomit.Registry do
+defmodule Vomitex.Registry do
   @type spec() :: [guide: module(), path: binary(), module: binary(), opts: keyword()]
   @callback specs() :: [spec()]
 
@@ -13,9 +13,9 @@ defmodule Vomit.Registry do
       end
 
     quote do
-      @behaviour Vomit.Registry
+      @behaviour Vomitex.Registry
 
-      @impl Vomit.Registry
+      @impl Vomitex.Registry
       def specs() do
         unquote(specs)
       end

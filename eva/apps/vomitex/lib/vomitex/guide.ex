@@ -1,4 +1,4 @@
-defmodule Vomit.Guide do
+defmodule Vomitex.Guide do
   defmacro def(call, expr \\ nil) do
     fname = elem(call, 0)
 
