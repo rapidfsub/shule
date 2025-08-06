@@ -1,6 +1,6 @@
-defmodule Vomit do
+defmodule Vomitex do
   @moduledoc """
-  Documentation for `Vomit`.
+  Documentation for `Vomitex`.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Vomit do
 
   ## Examples
 
-      iex> Vomit.hello()
+      iex> Vomitex.hello()
       :world
 
   """
