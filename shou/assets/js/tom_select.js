@@ -5,11 +5,56 @@ export default {
     const select = this.el.querySelector("select")
     this.tomSelect = new TomSelect(select, {})
 
-    this.handleEvent(`${this.el.id}:settings`, (settings) => {
+    this.handleEvent(`${this.el.id}:settings`, (payload) => {
       if (this.tomSelect) {
         this.tomSelect.destroy()
       }
-      this.tomSelect = new TomSelect(select, settings)
+      this.tomSelect = new TomSelect(select, this.getSettings(payload))
     })
   },
+  getSettings({ settings, isRemote }) {
+    if (isRemote) {
+      const fetch = (query, keyset) => {
+        return new Promise((resolve, _reject) => {
+          this.pushEventTo(this.el, "load", { query, keyset }, resolve)
+        })
+      }
+
+      return {
+        ...settings,
+        firstUrl: function (_query) {
+          return null
+        },
+        load: function (query, callback) {
+          let keyset = null
+          const content = this.dropdown_content
+          const distance = content.scrollTopMax - content.scrollTop
+          const threshold = content.clientHeight / 4
+          const shouldLoadMore = distance < threshold
+          if (shouldLoadMore) {
+            keyset = this.getUrl(query)
+          }
+
+          fetch(query, keyset)
+            .then(({ items, after, keyset }) => {
+              if (after) {
+                this.setNextUrl(query, keyset)
+              }
+
+              if (shouldLoadMore) {
+                // https://github.com/orchidjs/tom-select/issues/556#issuecomment-1919066054
+                const _scrollToOption = this.scrollToOption
+                this.scrollToOption = () => { }
+                callback(items)
+                this.scrollToOption = _scrollToOption
+              } else {
+                callback(items)
+              }
+            })
+            .catch(_err => callback())
+        }
+      }
+    }
+    return settings
+  }
 }
