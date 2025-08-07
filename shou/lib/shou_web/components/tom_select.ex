@@ -37,7 +37,9 @@ defmodule ShouWeb.TomSelect do
   def render(assigns) do
     ~H"""
     <div id={@id} phx-hook="TomSelect">
-      <select></select>
+      <div id={@id <> "_select_wrapper"} phx-update="ignore">
+        <select></select>
+      </div>
     </div>
     """
   end
