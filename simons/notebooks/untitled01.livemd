@@ -1,0 +1,231 @@
+# Untitled notebook
+
+```elixir
+Mix.install([
+  {:explorer, "~> 0.11.0"},
+  {:kino, "~> 0.16.1"},
+  {:kino_explorer, "~> 0.1.24"},
+  {:kino_vega_lite, "~> 0.1.11"}
+])
+```
+
+## Section
+
+```elixir
+alias Explorer.DataFrame
+alias Explorer.Series
+
+require Explorer.DataFrame
+require Explorer.Series
+```
+
+```elixir
+defmodule FileKit do
+  def krx_data_path() do
+    Path.join([__DIR__, "..", "priv", "krx_data"]) |> Path.expand()
+  end
+
+  def summaries_file_path() do
+    Path.join([krx_data_path(), "summaries", "20250808.csv"])
+  end
+
+  def candles_path() do
+    krx_data_path() |> Path.join("candles")
+  end
+
+  def candles_path(isin, year) do
+    Path.join([krx_data_path(), "candles", isin, "#{year}.parquet"])
+  end
+end
+```
+
+```elixir
+summaries_df = FileKit.summaries_file_path() |> DataFrame.from_csv!()
+```
+
+```elixir
+mappings = [
+  표준코드: :isin
+]
+```
+
+```elixir
+summaries_df =
+  summaries_df
+  |> DataFrame.select(Keyword.keys(mappings))
+  |> DataFrame.rename(mappings)
+```
+
+```elixir
+candles_path = FileKit.candles_path()
+
+candles_path_pairs =
+  for dirname <- File.ls!(candles_path) do
+    {dirname, Path.join(candles_path, dirname)}
+  end
+```
+
+```elixir
+mappings = [
+  ACC_TRDVAL: :acc_trdval,
+  MKTCAP: :mktcap,
+  TDD_CLSPRC: :close,
+  TDD_HGPRC: :high,
+  TDD_LWPRC: :low,
+  TDD_OPNPRC: :open,
+  TRD_DD: :date
+]
+```
+
+```elixir
+for {_isin, candles_path} <- candles_path_pairs, File.dir?(candles_path) do
+  parquet_path_pairs =
+    for year <- 2023..2024 do
+      {year, Path.join(candles_path, "#{year}.parquet")}
+    end
+
+  parquet_path_pairs
+  |> Enum.all?(fn {_year, path} ->
+    File.exists?(path)
+  end)
+  |> if do
+    {:error, :already_exists}
+  else
+    stat =
+      candles_path
+      |> Path.join("2023.csv")
+      |> File.stat!()
+
+    if stat.size < 100 do
+      {:error, :empty_csv}
+    else
+      df =
+        candles_path
+        |> Path.join("2023.csv")
+        |> DataFrame.from_csv!()
+        |> DataFrame.select(Keyword.keys(mappings))
+        |> DataFrame.rename(mappings)
+        |> DataFrame.mutate(
+          acc_trdval: cast(acc_trdval, :string) |> replace(",", "") |> cast(:u64),
+          mktcap: cast(mktcap, :string) |> replace(",", "") |> cast(:u64),
+          close: cast(close, :string) |> replace(",", "") |> cast(:u64),
+          high: cast(high, :string) |> replace(",", "") |> cast(:u64),
+          low: cast(low, :string) |> replace(",", "") |> cast(:u64),
+          open: cast(open, :string) |> replace(",", "") |> cast(:u64),
+          date: cast(date, :string) |> replace("/", "-") |> cast(:date)
+        )
+        |> DataFrame.sort_by(date)
+
+      for {year, path} <- parquet_path_pairs do
+        s_date = Date.new!(year, 1, 1)
+        e_date = Date.shift(s_date, year: 1)
+
+        df =
+          df
+          |> DataFrame.filter(greater_equal(date, ^s_date) and less(date, ^e_date))
+
+        if DataFrame.n_rows(df) > 0 do
+          DataFrame.to_parquet!(df, path)
+        else
+          {:error, :empty_dataframe}
+        end
+      end
+    end
+  end
+end
+```
+
+```elixir
+defmodule SimKit do
+  def get_candles(isin, ref_date, count) do
+    ref_date.year
+    |> Stream.unfold(fn year ->
+      path = FileKit.candles_path(isin, year)
+
+      if File.exists?(path) do
+        {path, year - 1}
+      end
+    end)
+    |> Enum.reduce_while(nil, fn path, acc ->
+      if acc && DataFrame.n_rows(acc) == count do
+        {:halt, acc}
+      else
+        df =
+          path
+          |> DataFrame.from_parquet!()
+          |> DataFrame.filter(less_equal(date, ^ref_date))
+
+        acc =
+          if acc do
+            DataFrame.concat_rows(df, acc)
+          else
+            df
+          end
+          |> DataFrame.sort_by(date)
+          |> DataFrame.tail(count)
+
+        {:cont, acc}
+      end
+    end)
+  end
+
+  def get_candles(ref_date, count) do
+    for isin <- FileKit.candles_path() |> File.ls!(),
+        candles = get_candles(isin, ref_date, count),
+        DataFrame.n_rows(candles) == count,
+        Series.last(candles[:date]) |> Date.compare(ref_date) == :eq do
+      {isin, candles}
+    end
+  end
+end
+```
+
+```elixir
+# SimKit.get_candles("HK0000057197", ~D[2023-08-01], 60)
+```
+
+```elixir
+~D[2023-08-01]
+|> Stream.unfold(fn date -> {date, Date.shift(date, day: 1)} end)
+|> Stream.filter(fn date -> Date.day_of_week(date) < 6 end)
+|> Stream.with_index()
+|> Stream.scan(nil, fn {date, index}, state ->
+  # new watshlist
+  new_items =
+    date
+    |> SimKit.get_candles(60)
+    |> Enum.filter(fn {_isin, df} ->
+      acc_trdval = df[:acc_trdval]
+      last_acc_trdval = Series.last(acc_trdval)
+
+      last_acc_trdval >= 10_000_000_000 and
+        Series.max(acc_trdval) == last_acc_trdval and
+        acc_trdval
+        |> Series.filter(_ > ^(last_acc_trdval / 2))
+        |> Series.count() <= 5
+    end)
+    |> Enum.map(fn {isin, df} ->
+      df
+      |> DataFrame.tail(1)
+      |> DataFrame.to_rows(atom_keys: true)
+      |> Enum.fetch!(-1)
+      |> Map.merge(%{
+        index: index,
+        key: {isin, date},
+        isin: isin
+      })
+    end)
+
+  # drop old watchlist
+  {old_items, dropped} =
+    Enum.split_while(state[:items] || [], fn item ->
+      index - item.index < 60
+    end)
+
+  items = Enum.concat(new_items, old_items)
+  state = %{index: index, date: date, items: items}
+  {state.index, state.date, length(state.items), List.first(state.items)} |> IO.inspect()
+  state
+end)
+|> Enum.take(100)
+```
