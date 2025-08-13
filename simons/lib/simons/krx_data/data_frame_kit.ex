@@ -17,4 +17,28 @@ defmodule Simons.KrxData.DataFrameKit do
   def get_isins() do
     Series.to_enum(get_summaries()[:isin])
   end
+
+  def merge_profiles() do
+    path = FileKit.get_profiles_path()
+
+    if not File.exists?(path) do
+      for dir <- FileKit.get_profiles_dir() |> File.ls!(),
+          path = FileKit.get_profiles_dir() |> Path.join(dir),
+          File.dir?(path),
+          filename <- File.ls!(path) do
+        df = Path.join(path, filename) |> DataFrame.from_csv!()
+
+        df
+        |> DataFrame.mutate(
+          PARVAL: cast(^df[:PARVAL], :string) |> cast(:u64),
+          CORP_TEL_NO: cast(^df[:CORP_TEL_NO], :string),
+          ISU_SRT_CD: cast(^df[:ISU_SRT_CD], :string)
+        )
+      end
+      |> DataFrame.concat_rows()
+      |> DataFrame.to_parquet!(path)
+    end
+
+    DataFrame.from_parquet!(path)
+  end
 end

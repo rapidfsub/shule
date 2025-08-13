@@ -17,6 +17,10 @@ defmodule Simons.KrxData.FileKit do
     get_dir([get_krx_data_dir(), "profiles"])
   end
 
+  def get_profiles_path() do
+    Path.join([get_profiles_dir(), get_filename(".parquet")])
+  end
+
   def get_profile_path(isin) do
     get_dir([get_profiles_dir(), isin]) |> Path.join(get_filename(".csv"))
   end
