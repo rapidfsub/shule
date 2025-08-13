@@ -36,6 +36,57 @@ defmodule Simons.KrxData.ApiClient do
     )
   end
 
+  @doc """
+  POST /comm/bldAttendant/getJsonData.cmd HTTP/1.1
+  Host: data.krx.co.kr
+  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:141.0) Gecko/20100101 Firefox/141.0
+  Accept: application/json, text/javascript, */*; q=0.01
+  Accept-Language: en-US,en;q=0.5
+  Accept-Encoding: gzip, deflate
+  Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+  X-Requested-With: XMLHttpRequest
+  Content-Length: 358
+  Origin: http://data.krx.co.kr
+  Connection: keep-alive
+  Referer: http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020201
+  Cookie: __smVisitorID=sAiIprWXh2k; JSESSIONID=Qtq2GBK8HxoYz5aFCLa6OaPEP2C9YcKvs6QW4osGL8JUwmlJl7gV7OrBEYJhn58s.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==
+
+  {
+    "bld": "dbms/MDC/STAT/standard/MDCSTAT01701",
+    "locale": "ko_KR",
+    "tboxisuCd_finder_stkisu0_4": "001440/대한전선",
+    "isuCd": "KR7001440007",
+    "isuCd2": "KR7005930003",
+    "codeNmisuCd_finder_stkisu0_4": "대한전선",
+    "param1isuCd_finder_stkisu0_4": "ALL",
+    "strtDd": "20250731",
+    "endDd": "20250808",
+    # 수정주가 적용
+    "adjStkPrc_check": "Y",
+    "adjStkPrc": "2",
+    # 주, 천주, 백만주
+    "share": "1",
+    # 원, 천원, 백만원, 십억원
+    "money": "1",
+    "csvxls_isNo": "false"
+  }
+  """
+  def get_candles(isin, s_date, e_date) do
+    new()
+    |> Req.post!(
+      form: %{
+        bld: "dbms/MDC/STAT/standard/MDCSTAT01701",
+        isuCd: isin,
+        isuCd2: isin,
+        strtDd: Calendar.strftime(s_date, "%Y%m%d"),
+        endDd: Calendar.strftime(e_date, "%Y%m%d"),
+        adjStkPrc: "1",
+        share: "1",
+        money: "1"
+      }
+    )
+  end
+
   defp new() do
     Req.new(
       base_url: "http://data.krx.co.kr",
