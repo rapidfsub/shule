@@ -87,6 +87,58 @@ defmodule Simons.KrxData.ApiClient do
     )
   end
 
+  @doc """
+  POST /comm/bldAttendant/getJsonData.cmd HTTP/2
+  Host: data.krx.co.kr
+  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:141.0) Gecko/20100101 Firefox/141.0
+  Accept: application/json, text/javascript, */*; q=0.01
+  Accept-Language: en-US,en;q=0.5
+  Accept-Encoding: gzip, deflate, br, zstd
+  Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+  X-Requested-With: XMLHttpRequest
+  Content-Length: 283
+  Origin: https://data.krx.co.kr
+  Connection: keep-alive
+  Referer: https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201010102
+  Cookie: __smVisitorID=sAiIprWXh2k; JSESSIONID=ZxzyYA7ullhNP04aQVkqVjaTKzNI1n6uyZHJa9h8UNdAugYrlp01TdR7OpyzDBQ0.bWRjX2RvbWFpbi9tZGNvd2FwMi1tZGNhcHAwMQ==
+  Sec-Fetch-Dest: empty
+  Sec-Fetch-Mode: cors
+  Sec-Fetch-Site: same-origin
+  Priority: u=0
+  TE: trailers
+
+  {
+    "bld": "dbms/MDC/STAT/standard/MDCSTAT00301",
+    "locale": "ko_KR",
+    "tboxindIdx_finder_equidx0_2": "코스피",
+    "indIdx": "1",
+    "indIdx2": "001",
+    "codeNmindIdx_finder_equidx0_2": "코스피",
+    "param1indIdx_finder_equidx0_2": "",
+    "strtDd": "20230101",
+    "endDd": "20241231",
+    "share": "1",
+    "money": "1",
+    "csvxls_isNo": "false"
+  }
+  """
+  def get_kospi_candles(s_date, e_date) do
+    new()
+    |> Req.post!(
+      form: %{
+        bld: "dbms/MDC/STAT/standard/MDCSTAT00301",
+        tboxindIdx_finder_equidx0_2: "코스피",
+        indIdx: "1",
+        indIdx2: "001",
+        codeNmindIdx_finder_equidx0_2: "코스피",
+        strtDd: Calendar.strftime(s_date, "%Y%m%d"),
+        endDd: Calendar.strftime(e_date, "%Y%m%d"),
+        share: "1",
+        money: "1"
+      }
+    )
+  end
+
   defp new() do
     Req.new(
       base_url: "http://data.krx.co.kr",

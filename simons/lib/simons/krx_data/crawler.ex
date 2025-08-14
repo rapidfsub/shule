@@ -35,6 +35,26 @@ defmodule Simons.KrxData.Crawler do
     end)
   end
 
+  def fetch_kospi_candles() do
+    for year <- 1991..2025 do
+      s_date = Date.new!(year, 1, 1)
+      e_date = Date.new!(year, 12, 31)
+      resp = ApiClient.get_kospi_candles(s_date, e_date)
+      path = FileKit.get_kospi_candles_path(year)
+
+      if File.exists?(path) do
+        {:error, :already_exists}
+      else
+        resp.body
+        |> Map.fetch!("output")
+        |> DataFrame.new()
+        |> DataFrame.to_parquet!(path)
+
+        sleep(1)
+      end
+    end
+  end
+
   defp crawl(fun) do
     for isins <- DataFrameKit.get_isins() |> Enum.chunk_every(500) do
       if :ok in do_crawl(isins, fun) do

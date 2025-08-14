@@ -33,6 +33,22 @@ defmodule Simons.KrxData.FileKit do
     get_dir([get_candles_dir(), isin]) |> Path.join("#{year}.csv")
   end
 
+  def get_index_dir() do
+    get_dir([get_krx_data_dir(), "index"])
+  end
+
+  def get_index_candles_dir() do
+    get_dir([get_index_dir(), "candles"])
+  end
+
+  def get_kospi_candles_dir() do
+    get_dir([get_index_candles_dir(), "kospi"])
+  end
+
+  def get_kospi_candles_path(year) do
+    get_kospi_candles_dir() |> Path.join("#{year}.parquet")
+  end
+
   @date ~D[2025-08-08]
   defp get_filename(ext) do
     Calendar.strftime(@date, "%Y%m%d") <> ext
