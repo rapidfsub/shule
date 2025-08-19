@@ -1,0 +1,363 @@
+# Untitled notebook
+
+## Section
+
+```elixir
+use Simons.KrxData.Prelude
+```
+
+```elixir
+defmodule SimKit do
+  require Explorer.Series
+
+  def list_trading_days(year) do
+    DataFrameKit.list_trading_days(year) |> Series.to_list()
+  end
+
+  def list_trading_days_before(date, n) do
+    date.year..1990//-1
+    |> Enum.reduce_while(nil, fn year, acc ->
+      days = DataFrameKit.list_trading_days(year)
+
+      days =
+        if acc do
+          Series.concat(days, acc)
+        else
+          days
+        end
+        |> Series.filter(less(_, ^date))
+        |> Series.sort()
+        |> Series.tail(n)
+
+      if Series.count(days) < n do
+        {:cont, days}
+      else
+        {:halt, days}
+      end
+    end)
+    |> Series.to_list()
+  end
+
+  def list_trading_days(s_date, e_date) do
+    Enum.flat_map(s_date.year..e_date.year//1, fn year ->
+      year
+      |> DataFrameKit.list_trading_days()
+      |> Series.filter(greater_equal(_, ^s_date) and less_equal(_, ^e_date))
+      |> Series.sort()
+      |> Series.to_list()
+    end)
+  end
+end
+```
+
+```elixir
+defmodule State do
+  defmodule Item do
+    @enforce_keys [
+      :state,
+      # watch
+      :isin,
+      :buy_price,
+      :sell_price,
+      # buy 
+      :buy_date,
+      :buy_qty,
+      :buy_amt,
+      # sell
+      :sell_date,
+      :sell_amt,
+      # candle
+      :close,
+      :high,
+      :low,
+      :open,
+      :date,
+      :acc_trdval,
+      :mktcap
+    ]
+    defstruct @enforce_keys
+
+    def new(isin, prev, curr) do
+      ref =
+        if prev.close * 1.1 < curr.low do
+          prev.close
+        else
+          curr.low
+        end
+
+      buy_price = trunc(ref * 1.01) |> trunc_price()
+      sell_price = trunc(ref * 1.11) |> trunc_price()
+
+      map =
+        Map.merge(curr, %{
+          isin: isin,
+          state: :watch,
+          buy_price: buy_price,
+          sell_price: sell_price,
+          buy_date: nil,
+          buy_qty: nil,
+          buy_amt: nil,
+          sell_date: nil,
+          sell_amt: nil
+        })
+
+      struct!(__MODULE__, map)
+    end
+
+    defp trunc_price(price) do
+      tick =
+        cond do
+          price <= 1000 -> 1
+          price <= 5000 -> 5
+          price <= 10000 -> 10
+          price <= 50000 -> 50
+          price <= 100_000 -> 100
+          price <= 500_000 -> 500
+          true -> 1000
+        end
+
+      div(price, tick) * tick
+    end
+
+    def buy(%__MODULE__{} = item, date, amt) do
+      qty = div(amt, item.buy_price)
+      amt = item.buy_price * qty
+      %{item | state: :buy, buy_date: date, buy_qty: qty, buy_amt: amt}
+    end
+
+    def sell(%__MODULE__{} = item, date) do
+      amt = item.sell_price * item.buy_qty
+      %{item | state: :sell, sell_date: date, sell_amt: amt}
+    end
+
+    def sell(%__MODULE__{} = item, date, price) do
+      amt = price * item.buy_qty
+      %{item | state: :sell, sell_date: date, sell_amt: amt}
+    end
+  end
+
+  @enforce_keys [:date, :items, :balance, :count]
+  defstruct @enforce_keys
+
+  def new(date) do
+    %__MODULE__{
+      date: date,
+      items: [],
+      balance: 1_000_000,
+      count: 20
+    }
+  end
+
+  def run(s_date, e_date) do
+    SimKit.list_trading_days(s_date, e_date)
+    |> Enum.scan(new(s_date), fn date, state ->
+      state = do_run(%{state | date: date})
+      Map.drop(state, [:__struct__, :items]) |> IO.inspect()
+
+      amts =
+        for %{state: :buy} = item <- state.items do
+          candle =
+            DataFrameKit.list_candles_lte(item.isin, state.date, 1)
+            |> DataFrame.to_rows(atom_keys: true)
+            |> Enum.fetch!(0)
+
+          candle.close * item.buy_qty
+        end
+
+      {amts, Enum.sum(amts) + state.balance}
+      |> IO.inspect()
+
+      IO.inspect({Process.get(:buy), Process.get(:sell)})
+      IO.inspect({Process.get(:good), Process.get(:bad)})
+      state
+    end)
+  end
+
+  defp do_run(state) do
+    state
+    |> print(:day_start)
+    |> remove_items()
+    |> print(:after_remove_items)
+    |> buy_items()
+    |> print(:after_buy_items)
+    |> sell_items()
+    |> print(:after_sell_items)
+    |> add_items()
+    |> print(:after_add_items)
+  end
+
+  defp print(%__MODULE__{} = state, event_name) do
+    state
+    |> Map.drop([:__struct__, :items])
+    |> Keyword.new()
+    |> Keyword.put(:item_count, length(state.items))
+    |> IO.inspect(label: inspect(date: state.date, event_name: event_name))
+
+    state
+  end
+
+  defp remove_items(%__MODULE__{} = state) do
+    items =
+      Enum.filter(state.items, fn item ->
+        df = DataFrameKit.list_candles_lte(item.isin, state.date, 60)
+
+        case item.state do
+          :watch ->
+            if df do
+              first_date = Series.first(df[:date])
+              Date.compare(item.date, first_date) != :lt
+            end
+
+          :sell ->
+            false
+
+          _state ->
+            true
+        end
+      end)
+
+    %{state | items: items}
+  end
+
+  defp add_items(%__MODULE__{} = state) do
+    items =
+      DataFrameKit.get_isins()
+      |> Enum.flat_map(fn isin ->
+        df = DataFrameKit.list_candles_lte(isin, state.date, 60)
+
+        if df do
+          [prev, curr] = DataFrame.tail(df, 2) |> DataFrame.to_rows(atom_keys: true)
+          acc_trdvals = df[:acc_trdval]
+
+          cond do
+            acc_trdvals
+            |> Series.filter(_ == 0)
+            |> Series.count() > 0 ->
+              nil
+
+            acc_trdvals
+            |> Series.filter(greater(_, ^curr.acc_trdval))
+            |> Series.count() > 0 ->
+              nil
+
+            acc_trdvals
+            |> Series.filter(greater(_, ^(curr.acc_trdval / 2)))
+            |> Series.count() > 5 ->
+              nil
+
+            (curr.close - prev.close) / prev.close < 0.15 ->
+              nil
+
+            (curr.high - prev.close) / prev.close < 0.20 ->
+              nil
+
+            curr.acc_trdval < 10_000_000_000 ->
+              nil
+
+            true ->
+              [prev, curr] = DataFrame.tail(df, 2) |> DataFrame.to_rows(atom_keys: true)
+              Item.new(isin, prev, curr)
+          end
+        end
+        |> List.wrap()
+      end)
+
+    %{state | items: Enum.concat(items, state.items)}
+  end
+
+  defp buy_items(%__MODULE__{items: []} = state) do
+    state
+  end
+
+  defp buy_items(%__MODULE__{} = state) do
+    pairs =
+      Enum.scan(state.items, {nil, state}, fn item, {_prev, state} ->
+        with :watch <- item.state,
+             %{} = df <- DataFrameKit.list_candles_lte(item.isin, state.date, 1),
+             [%{} = candle] <- DataFrame.to_rows(df, atom_keys: true),
+             true <- candle.low <= item.buy_price do
+          if state.count > 0 do
+            Process.put(:buy, Process.get(:buy, 0) + 1)
+            item = Item.buy(item, state.date, div(state.balance, state.count))
+            count = state.count - 1
+            balance = state.balance - item.buy_amt
+            state = %{state | count: count, balance: balance}
+            {item, state}
+          else
+            {item, state}
+          end
+        else
+          _ -> {item, state}
+        end
+      end)
+
+    items = Enum.map(pairs, &elem(&1, 0))
+    state = Enum.fetch!(pairs, -1) |> elem(1)
+    %{state | items: items}
+  end
+
+  defp sell_items(%__MODULE__{items: []} = state) do
+    state
+  end
+
+  defp sell_items(%__MODULE__{} = state) do
+    pairs =
+      Enum.scan(state.items, {nil, state}, fn item, {_prev, state} ->
+        with :buy <- item.state,
+             %{} = df <- DataFrameKit.list_candles_lte(item.isin, state.date, 1),
+             [%{} = candle] <- DataFrame.to_rows(df, atom_keys: true) do
+          # IO.inspect({item.isin, item.buy_date, item.sell_price, candle.date, candle.high})
+
+          diff = Date.diff(state.date, item.buy_date)
+
+          cond do
+            diff < 1 and candle.close >= item.sell_price ->
+              Item.sell(item, state.date)
+
+            diff > 0 and candle.low < item.buy_price * 0.7 ->
+              Item.sell(item, state.date, candle.low)
+
+            diff < 90 and candle.high >= item.sell_price ->
+              Item.sell(item, state.date)
+
+            diff >= 90 ->
+              Item.sell(item, state.date, candle.close)
+
+            true ->
+              nil
+          end
+          |> case do
+            %{} = item ->
+              Process.put(:sell, Process.get(:sell, 0) + 1)
+
+              res = item.sell_amt - item.buy_amt
+
+              if res > 0 do
+                Process.put(:good, res + Process.get(:good, 0))
+              else
+                Process.put(:bad, res + Process.get(:bad, 0))
+              end
+
+              count = state.count + 1
+              balance = state.balance + item.sell_amt
+              state = %{state | count: count, balance: balance}
+              {item, state}
+
+            nil ->
+              {item, state}
+          end
+        else
+          _ -> {item, state}
+        end
+      end)
+
+    items = Enum.map(pairs, &elem(&1, 0))
+    state = Enum.fetch!(pairs, -1) |> elem(1)
+    %{state | items: items}
+  end
+end
+```
+
+```elixir
+State.run(~D[2023-04-01], ~D[2024-12-31])
+```
