@@ -5,6 +5,7 @@ defmodule Simons.KrxData.Prelude do
       alias Explorer.Series
 
       require Explorer.DataFrame
+      require Explorer.Series
       require Logger
 
       alias Simons.KrxData.ApiClient

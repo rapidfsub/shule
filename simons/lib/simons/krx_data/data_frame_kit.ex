@@ -41,4 +41,47 @@ defmodule Simons.KrxData.DataFrameKit do
 
     DataFrame.from_parquet!(path)
   end
+
+  def list_trading_days(year) do
+    df =
+      FileKit.get_kospi_candles_path(year)
+      |> DataFrame.from_parquet!()
+
+    df[:TRD_DD]
+    |> Series.replace("/", "-")
+    |> Series.cast(:date)
+    |> Series.sort()
+  end
+
+  def list_candles_lte(isin, date, count) do
+    df =
+      Stream.unfold(date.year, fn
+        year ->
+          case FileKit.get_candles_path(isin, year) |> DataFrame.from_parquet() do
+            {:ok, df} -> {df, year - 1}
+            {:error, _reason} -> nil
+          end
+      end)
+      |> Enum.reduce_while(nil, fn df, acc ->
+        acc =
+          if acc do
+            DataFrame.concat_rows(df, acc)
+          else
+            df
+          end
+          |> DataFrame.filter(less_equal(date, ^date))
+          |> DataFrame.sort_by(date)
+          |> DataFrame.tail(count)
+
+        if DataFrame.n_rows(acc) < count do
+          {:cont, acc}
+        else
+          {:halt, acc}
+        end
+      end)
+
+    if df && DataFrame.n_rows(df) == count do
+      df
+    end
+  end
 end

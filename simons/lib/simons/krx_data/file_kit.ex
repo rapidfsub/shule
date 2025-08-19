@@ -29,8 +29,12 @@ defmodule Simons.KrxData.FileKit do
     get_dir([get_krx_data_dir(), "candles"])
   end
 
-  def get_candles_path(isin, year) do
+  def get_candles_csv_path(isin, year) do
     get_dir([get_candles_dir(), isin]) |> Path.join("#{year}.csv")
+  end
+
+  def get_candles_path(isin, year) do
+    get_dir([get_candles_dir(), isin]) |> Path.join("#{year}.parquet")
   end
 
   def get_index_dir() do
