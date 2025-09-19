@@ -39,7 +39,9 @@ defmodule Plato.MixProject do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    []
+    [
+      {:tidewave, "~> 0.5", only: [:dev]}
+    ]
   end
 
   defp phx_deps() do
