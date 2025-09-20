@@ -9,7 +9,7 @@ defmodule Plato.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: Enum.concat([deps(), phx_deps(), dev_deps()]),
+      deps: Enum.concat([deps(), ash_deps(), phx_deps(), dev_deps()]),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader]
     ]
@@ -40,10 +40,16 @@ defmodule Plato.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:tidewave, "~> 0.5", only: [:dev]},
+      {:kino, "~> 0.16.0"},
+      {:kino_explorer, "~> 0.1.20"}
+    ]
+  end
+
+  defp ash_deps() do
+    [
       {:ash, "~> 3.0"},
-      {:ash_postgres, "~> 2.0"},
       {:ash_phoenix, "~> 2.0"},
+      {:ash_postgres, "~> 2.0"},
       {:cinder, "~> 0.6.1"}
     ]
   end
@@ -82,7 +88,8 @@ defmodule Plato.MixProject do
   defp dev_deps() do
     [
       {:igniter, "~> 0.6", only: [:dev, :test]},
-      {:usage_rules, "~> 0.1.24", only: [:dev]}
+      {:usage_rules, "~> 0.1.24", only: [:dev]},
+      {:tidewave, "~> 0.5", only: [:dev]}
     ]
   end
 
