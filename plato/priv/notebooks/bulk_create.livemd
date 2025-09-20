@@ -1,0 +1,95 @@
+# Bulk Create
+
+## Students
+
+```elixir
+# df =
+#   Kino.FS.file_path("students_sample.csv")
+#   |> Explorer.DataFrame.from_csv!()
+```
+
+```elixir
+alias Explorer.DataFrame
+alias Plato.Domain
+alias Plato.Repo
+```
+
+```elixir
+rows =
+  df
+  |> DataFrame.to_rows(atom_keys: true)
+```
+
+```elixir
+Repo.transact(
+  fn ->
+    campuses = Domain.list_campuses!() |> Map.new(&{&1.name, &1})
+
+    rows
+    |> Enum.map(& &1.campus_name)
+    |> Enum.uniq()
+    |> Enum.reject(&Map.has_key?(campuses, &1))
+    |> Enum.each(fn campus_name ->
+      Domain.create_campus(%{name: campus_name}) |> IO.inspect()
+    end)
+
+    campuses = Domain.list_campuses!() |> Map.new(&{&1.name, &1})
+
+    results =
+      rows
+      |> Enum.map(fn params ->
+        campus = Map.fetch!(campuses, params.campus_name)
+        params = Map.delete(params, :campus_name) |> Map.put(:campus_id, campus.id)
+        Domain.create_student(params) |> IO.inspect()
+      end)
+
+    Repo.rollback(:test)
+    {:ok, results}
+  end,
+  timeout: :timer.minutes(30)
+)
+```
+
+## Problems
+
+```elixir
+# df =
+#   Kino.FS.file_path("problems_sample.csv")
+#   |> Explorer.DataFrame.from_csv!()
+```
+
+```elixir
+rows =
+  df
+  |> DataFrame.to_rows(atom_keys: true)
+```
+
+```elixir
+Repo.transact(
+  fn ->
+    campuses = Domain.list_campuses!() |> Map.new(&{&1.name, &1})
+
+    rows
+    |> Enum.map(& &1.campus_name)
+    |> Enum.uniq()
+    |> Enum.reject(&Map.has_key?(campuses, &1))
+    |> Enum.each(fn campus_name ->
+      Domain.create_campus(%{name: campus_name}) |> IO.inspect()
+    end)
+
+    campuses = Domain.list_campuses!() |> Map.new(&{&1.name, &1})
+
+    results =
+      rows
+      |> Enum.map(fn params ->
+        campus = Map.fetch!(campuses, params.campus_name)
+        params = Map.delete(params, :campus_name) |> Map.put(:campus_id, campus.id)
+        Domain.create_problem(params) |> IO.inspect()
+      end)
+
+    Repo.rollback(:test)
+    {:ok, results}
+  end,
+  timeout: :timer.minutes(30)
+)
+```
