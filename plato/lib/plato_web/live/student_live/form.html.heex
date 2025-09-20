@@ -1,0 +1,34 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/students"}>
+        <.button>목록으로</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <.form for={@form} id="student-form" phx-change="validate" phx-submit="save">
+    <div class="space-y-6">
+      <.input field={@form[:name]} type="text" label="이름" />
+      <.input field={@form[:phone]} type="text" label="연락처" />
+      <.input field={@form[:grade]} type="number" label="학년" />
+      <.input
+        field={@form[:campus_id]}
+        type="select"
+        label="캠퍼스"
+        prompt="캠퍼스를 선택하세요"
+        options={@campus_options}
+      />
+    </div>
+
+    <div class="mt-8 flex gap-3">
+      <.button phx-disable-with="저장 중...">
+        학생 저장
+      </.button>
+      <.link navigate={~p"/students"} class="button-secondary">
+        취소
+      </.link>
+    </div>
+  </.form>
+</Layouts.app>

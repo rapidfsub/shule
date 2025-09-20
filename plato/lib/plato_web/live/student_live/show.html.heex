@@ -1,0 +1,67 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/students/#{@student}/edit"}>
+        <.button>수정</.button>
+      </.link>
+      <.button
+        phx-click={JS.push("delete", value: %{id: @student.id})}
+        data-confirm="정말 삭제하시겠습니까?"
+        class="bg-red-500 hover:bg-red-700"
+      >
+        삭제
+      </.button>
+    </:actions>
+  </.header>
+
+  <div class="bg-white shadow rounded-lg p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">기본 정보</h3>
+        <dl class="space-y-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">이름</dt>
+            <dd class="mt-1 text-sm text-gray-900">{@student.name}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">학년</dt>
+            <dd class="mt-1 text-sm text-gray-900">{@student.grade}학년</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">연락처</dt>
+            <dd class="mt-1 text-sm text-gray-900">{@student.phone || "등록되지 않음"}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">캠퍼스</dt>
+            <dd class="mt-1 text-sm text-gray-900">{@student.campus.name}</dd>
+          </div>
+        </dl>
+      </div>
+      
+      <div>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">등록 정보</h3>
+        <dl class="space-y-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">등록일</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              {Calendar.strftime(@student.inserted_at, "%Y년 %m월 %d일")}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">최종 수정일</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              {Calendar.strftime(@student.updated_at, "%Y년 %m월 %d일")}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-between">
+    <.link navigate={~p"/students"} class="text-blue-600 hover:text-blue-800">
+      ← 학생 목록으로 돌아가기
+    </.link>
+  </div>
+</Layouts.app>

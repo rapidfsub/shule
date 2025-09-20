@@ -1,0 +1,47 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/students/new"}>
+        <.button>새 학생 등록</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <Cinder.Table.table 
+    query={Ash.Query.load(Plato.Student, :campus)}
+    theme="daisy_ui"
+    id="students-table"
+    row_click={fn student -> JS.navigate(~p"/students/#{student.id}") end}
+  >
+    <:col :let={student} field="name" filter sort label="이름">
+      {student.name}
+    </:col>
+    <:col :let={student} field="grade" filter sort label="학년">
+      {student.grade}학년
+    </:col>
+    <:col :let={student} field="phone" filter label="연락처">
+      {student.phone}
+    </:col>
+    <:col :let={student} field="campus.name" filter sort label="캠퍼스">
+      {student.campus.name}
+    </:col>
+    <:col :let={student} field="inserted_at" sort label="등록일">
+      {Calendar.strftime(student.inserted_at, "%Y-%m-%d")}
+    </:col>
+    <:col :let={student} label="관리">
+      <div class="flex space-x-2">
+        <.link navigate={~p"/students/#{student}/edit"} class="text-blue-600 hover:text-blue-900">
+          수정
+        </.link>
+        <.link
+          phx-click={JS.push("delete", value: %{id: student.id})}
+          data-confirm="정말 삭제하시겠습니까?"
+          class="text-red-600 hover:text-red-900"
+        >
+          삭제
+        </.link>
+      </div>
+    </:col>
+  </Cinder.Table.table>
+</Layouts.app>
