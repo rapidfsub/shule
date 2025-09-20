@@ -17,7 +17,17 @@ defmodule PlatoWeb.Router do
   scope "/", PlatoWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", HomeLive, :index
+
+    live "/students", StudentLive.Index, :index
+    live "/students/new", StudentLive.Form, :new
+    live "/students/:id", StudentLive.Show, :show
+    live "/students/:id/edit", StudentLive.Form, :edit
+
+    live "/problems", ProblemLive.Index, :index
+    live "/problems/new", ProblemLive.Form, :new
+    live "/problems/:id", ProblemLive.Show, :show
+    live "/problems/:id/edit", ProblemLive.Form, :edit
   end
 
   # Other scopes may use custom stacks.

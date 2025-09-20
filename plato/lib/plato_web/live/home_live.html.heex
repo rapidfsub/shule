@@ -1,0 +1,108 @@
+<Layouts.app flash={@flash}>
+  <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
+    <div class="mx-auto max-w-4xl">
+      <div class="text-center">
+        <.header>
+          플라토 학원 관리 시스템
+          <:subtitle>학원 운영을 위한 통합 관리 시스템</:subtitle>
+        </.header>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <.link
+          navigate={~p"/students"}
+          class="group relative rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200"
+        >
+          <div>
+            <span class="inline-flex rounded-lg bg-blue-50 p-3 text-blue-600 ring-4 ring-white">
+              <.icon name="hero-academic-cap" class="h-6 w-6" />
+            </span>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">
+              학생 명부 <span class="absolute inset-0" aria-hidden="true"></span>
+            </h3>
+            <p class="mt-2 text-sm text-gray-500">
+              학생 정보를 등록하고 관리합니다.
+            </p>
+          </div>
+          <span
+            class="pointer-events-none absolute top-6 right-6 text-gray-300 group-hover:text-gray-400"
+            aria-hidden="true"
+          >
+            <.icon name="hero-chevron-right" class="h-6 w-6" />
+          </span>
+        </.link>
+
+        <.link
+          navigate={~p"/problems"}
+          class="group relative rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200"
+        >
+          <div>
+            <span class="inline-flex rounded-lg bg-green-50 p-3 text-green-600 ring-4 ring-white">
+              <.icon name="hero-document-text" class="h-6 w-6" />
+            </span>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">
+              문제 은행 <span class="absolute inset-0" aria-hidden="true"></span>
+            </h3>
+            <p class="mt-2 text-sm text-gray-500">
+              수학, 영어 문제를 등록하고 관리합니다.
+            </p>
+          </div>
+          <span
+            class="pointer-events-none absolute top-6 right-6 text-gray-300 group-hover:text-gray-400"
+            aria-hidden="true"
+          >
+            <.icon name="hero-chevron-right" class="h-6 w-6" />
+          </span>
+        </.link>
+
+        <div class="group relative rounded-lg p-6 bg-gray-50 shadow-lg opacity-50">
+          <div>
+            <span class="inline-flex rounded-lg bg-gray-100 p-3 text-gray-400 ring-4 ring-white">
+              <.icon name="hero-chart-bar" class="h-6 w-6" />
+            </span>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-base font-semibold leading-6 text-gray-500">
+              성적 관리 <span class="absolute inset-0" aria-hidden="true"></span>
+            </h3>
+            <p class="mt-2 text-sm text-gray-400">
+              곧 추가될 예정입니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-16">
+        <h3 class="text-lg font-medium text-gray-900 mb-6">최근 활동</h3>
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
+              <div>
+                <dt class="text-sm font-medium text-gray-500">등록 학생 수</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                  {length(@students)}명
+                </dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">문제 은행</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                  {length(@problems)}문제
+                </dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">캠퍼스</dt>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                  {length(@campuses)}개
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

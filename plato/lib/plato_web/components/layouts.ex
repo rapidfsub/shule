@@ -34,41 +34,109 @@ defmodule PlatoWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
+    assigns = assign_new(assigns, :current_path, fn -> "" end)
+
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex flex-column px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
+    <header class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo and Brand -->
+          <div class="flex items-center">
+            <.link navigate={~p"/"} class="flex items-center space-x-3">
+              <div class="bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-lg">
+                플라토
+              </div>
+              <span class="text-gray-600 dark:text-gray-300 text-sm">학원 관리 시스템</span>
+            </.link>
+          </div>
+          
+    <!-- Main Navigation -->
+          <nav class="hidden md:flex space-x-8">
+            <.nav_link href={~p"/"} current={@current_path}>
+              <.icon name="hero-home" class="w-4 h-4 mr-2" /> 대시보드
+            </.nav_link>
+            <.nav_link href={~p"/students"} current={@current_path}>
+              <.icon name="hero-academic-cap" class="w-4 h-4 mr-2" /> 학생명부
+            </.nav_link>
+            <.nav_link href={~p"/problems"} current={@current_path}>
+              <.icon name="hero-document-text" class="w-4 h-4 mr-2" /> 문제은행
+            </.nav_link>
+          </nav>
+          
+    <!-- Theme Toggle -->
+          <div class="flex items-center">
             <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
-        </ul>
+          </div>
+        </div>
+      </div>
+      
+    <!-- Mobile Navigation -->
+      <div class="md:hidden bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+          <.mobile_nav_link href={~p"/"} current={@current_path}>
+            <.icon name="hero-home" class="w-4 h-4 mr-2" /> 대시보드
+          </.mobile_nav_link>
+          <.mobile_nav_link href={~p"/students"} current={@current_path}>
+            <.icon name="hero-academic-cap" class="w-4 h-4 mr-2" /> 학생명부
+          </.mobile_nav_link>
+          <.mobile_nav_link href={~p"/problems"} current={@current_path}>
+            <.icon name="hero-document-text" class="w-4 h-4 mr-2" /> 문제은행
+          </.mobile_nav_link>
+        </div>
       </div>
     </header>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
-        {render_slot(@inner_block)}
-      </div>
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      {render_slot(@inner_block)}
     </main>
 
     <.flash_group flash={@flash} />
+    """
+  end
+
+  # Navigation link component for desktop
+  attr :href, :string, required: true
+  attr :current, :string, default: ""
+  slot :inner_block, required: true
+
+  def nav_link(assigns) do
+    ~H"""
+    <.link
+      navigate={@href}
+      class={[
+        "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+        if((String.starts_with?(@current, @href) && @href != "/") || @current == @href,
+          do: "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20",
+          else:
+            "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+        )
+      ]}
+    >
+      {render_slot(@inner_block)}
+    </.link>
+    """
+  end
+
+  # Navigation link component for mobile
+  attr :href, :string, required: true
+  attr :current, :string, default: ""
+  slot :inner_block, required: true
+
+  def mobile_nav_link(assigns) do
+    ~H"""
+    <.link
+      navigate={@href}
+      class={[
+        "flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors",
+        if((String.starts_with?(@current, @href) && @href != "/") || @current == @href,
+          do: "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20",
+          else:
+            "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+        )
+      ]}
+    >
+      {render_slot(@inner_block)}
+    </.link>
     """
   end
 
