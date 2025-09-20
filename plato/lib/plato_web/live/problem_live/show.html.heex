@@ -1,0 +1,152 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/problems/#{@problem}/edit"}>
+        <.button>수정</.button>
+      </.link>
+      <.button
+        phx-click={JS.push("delete", value: %{id: @problem.id})}
+        data-confirm="정말 삭제하시겠습니까?"
+        class="bg-red-500 hover:bg-red-700"
+      >
+        삭제
+      </.button>
+    </:actions>
+  </.header>
+
+  <div class="bg-white shadow rounded-lg p-6 mb-6">
+    <!-- 문제 정보 헤더 -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <span class={"inline-flex px-3 py-1 text-sm font-semibold rounded-full #{subject_class(@problem.subject)}"}>
+          {subject_label(@problem.subject)}
+        </span>
+        <span class={"inline-flex px-3 py-1 text-sm font-semibold rounded-full #{difficulty_class(@problem.difficulty)}"}>
+          난이도: {difficulty_label(@problem.difficulty)}
+        </span>
+      </div>
+      <div class="text-sm text-gray-500">
+        정답: <span class="font-semibold text-gray-900">{String.upcase(Atom.to_string(@problem.correct_answer))}</span>
+      </div>
+    </div>
+
+    <!-- 문제 내용 -->
+    <div class="mb-8">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">문제</h3>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-gray-900 whitespace-pre-line">{@problem.content}</p>
+      </div>
+    </div>
+
+    <!-- 선택지 -->
+    <div class="mb-8">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">선택지</h3>
+      <div class="space-y-3">
+        <div class={[
+          "p-4 rounded-lg border-2",
+          if(@problem.correct_answer == :a, do: "border-green-500 bg-green-50", else: "border-gray-200 bg-gray-50")
+        ]}>
+          <div class="flex items-start">
+            <span class={[
+              "inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold mr-3",
+              if(@problem.correct_answer == :a, do: "bg-green-500 text-white", else: "bg-gray-300 text-gray-700")
+            ]}>
+              A
+            </span>
+            <p class="flex-1 text-gray-900">{@problem.option_a}</p>
+            <%= if @problem.correct_answer == :a do %>
+              <span class="text-green-600 font-semibold">✓ 정답</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class={[
+          "p-4 rounded-lg border-2",
+          if(@problem.correct_answer == :b, do: "border-green-500 bg-green-50", else: "border-gray-200 bg-gray-50")
+        ]}>
+          <div class="flex items-start">
+            <span class={[
+              "inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold mr-3",
+              if(@problem.correct_answer == :b, do: "bg-green-500 text-white", else: "bg-gray-300 text-gray-700")
+            ]}>
+              B
+            </span>
+            <p class="flex-1 text-gray-900">{@problem.option_b}</p>
+            <%= if @problem.correct_answer == :b do %>
+              <span class="text-green-600 font-semibold">✓ 정답</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class={[
+          "p-4 rounded-lg border-2",
+          if(@problem.correct_answer == :c, do: "border-green-500 bg-green-50", else: "border-gray-200 bg-gray-50")
+        ]}>
+          <div class="flex items-start">
+            <span class={[
+              "inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold mr-3",
+              if(@problem.correct_answer == :c, do: "bg-green-500 text-white", else: "bg-gray-300 text-gray-700")
+            ]}>
+              C
+            </span>
+            <p class="flex-1 text-gray-900">{@problem.option_c}</p>
+            <%= if @problem.correct_answer == :c do %>
+              <span class="text-green-600 font-semibold">✓ 정답</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class={[
+          "p-4 rounded-lg border-2",
+          if(@problem.correct_answer == :d, do: "border-green-500 bg-green-50", else: "border-gray-200 bg-gray-50")
+        ]}>
+          <div class="flex items-start">
+            <span class={[
+              "inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold mr-3",
+              if(@problem.correct_answer == :d, do: "bg-green-500 text-white", else: "bg-gray-300 text-gray-700")
+            ]}>
+              D
+            </span>
+            <p class="flex-1 text-gray-900">{@problem.option_d}</p>
+            <%= if @problem.correct_answer == :d do %>
+              <span class="text-green-600 font-semibold">✓ 정답</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 해설 -->
+    <%= if @problem.explanation && String.trim(@problem.explanation) != "" do %>
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">해설</h3>
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <p class="text-gray-900 whitespace-pre-line">{@problem.explanation}</p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 추가 정보 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
+      <div>
+        <h4 class="text-sm font-medium text-gray-500 mb-2">캠퍼스</h4>
+        <p class="text-sm text-gray-900">{@problem.campus.name}</p>
+      </div>
+      <div>
+        <h4 class="text-sm font-medium text-gray-500 mb-2">등록일</h4>
+        <p class="text-sm text-gray-900">{Calendar.strftime(@problem.inserted_at, "%Y년 %m월 %d일")}</p>
+      </div>
+      <div>
+        <h4 class="text-sm font-medium text-gray-500 mb-2">최종 수정일</h4>
+        <p class="text-sm text-gray-900">{Calendar.strftime(@problem.updated_at, "%Y년 %m월 %d일")}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-between">
+    <.link navigate={~p"/problems"} class="text-blue-600 hover:text-blue-800">
+      ← 문제 목록으로 돌아가기
+    </.link>
+  </div>
+</Layouts.app>

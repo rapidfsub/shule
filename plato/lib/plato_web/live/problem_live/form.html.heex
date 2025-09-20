@@ -1,0 +1,115 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/problems"}>
+        <.button>목록으로</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <.form for={@form} id="problem-form" phx-change="validate" phx-submit="save">
+    <div class="space-y-6">
+      <!-- 기본 정보 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <.input
+          field={@form[:subject]}
+          type="select"
+          label="과목"
+          prompt="과목을 선택하세요"
+          options={[{"수학", "math"}, {"영어", "english"}]}
+        />
+        <.input
+          field={@form[:difficulty]}
+          type="select"
+          label="난이도"
+          prompt="난이도를 선택하세요"
+          options={[{"하", "low"}, {"중", "medium"}, {"상", "high"}]}
+        />
+      </div>
+      
+<!-- 문제 내용 -->
+      <.input field={@form[:content]} type="textarea" label="문제 내용" rows="4" />
+      
+<!-- 선택지 -->
+      <div>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">객관식 선택지</h3>
+        <div class="space-y-3">
+          <div class="flex items-center space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+              A
+            </span>
+            <.input
+              field={@form[:option_a]}
+              type="text"
+              label=""
+              placeholder="선택지 A를 입력하세요"
+            />
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+              B
+            </span>
+            <.input
+              field={@form[:option_b]}
+              type="text"
+              label=""
+              placeholder="선택지 B를 입력하세요"
+            />
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+              C
+            </span>
+            <.input
+              field={@form[:option_c]}
+              type="text"
+              label=""
+              placeholder="선택지 C를 입력하세요"
+            />
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+              D
+            </span>
+            <.input
+              field={@form[:option_d]}
+              type="text"
+              label=""
+              placeholder="선택지 D를 입력하세요"
+            />
+          </div>
+        </div>
+      </div>
+      
+<!-- 정답 및 해설 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <.input
+          field={@form[:correct_answer]}
+          type="select"
+          label="정답"
+          prompt="정답을 선택하세요"
+          options={[{"A", "a"}, {"B", "b"}, {"C", "c"}, {"D", "d"}]}
+        />
+        <.input
+          field={@form[:campus_id]}
+          type="select"
+          label="캠퍼스"
+          prompt="캠퍼스를 선택하세요"
+          options={@campus_options}
+        />
+      </div>
+
+      <.input field={@form[:explanation]} type="textarea" label="해설" rows="3" />
+    </div>
+
+    <div class="mt-8 flex gap-3">
+      <.button phx-disable-with="저장 중...">
+        문제 저장
+      </.button>
+      <.link navigate={~p"/problems"} class="button-secondary">
+        취소
+      </.link>
+    </div>
+  </.form>
+</Layouts.app>
