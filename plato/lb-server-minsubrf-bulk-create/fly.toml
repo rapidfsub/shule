@@ -1,21 +1,16 @@
-# fly.toml app configuration file generated for minsubrf on 2025-09-20T13:37:43+09:00
+# fly.toml app configuration file generated for lb-server on 2025-09-20T15:37:30+09:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'minsubrf'
+app = 'lb-server'
 primary_region = 'sin'
-kill_signal = 'SIGTERM'
 
 [build]
-
-[deploy]
-release_command = '/app/bin/migrate'
+image = 'ghcr.io/livebook-dev/livebook:0.16.4'
 
 [env]
-PHX_HOST = 'minsubrf.fly.dev'
-PORT = '8080'
-RELEASE_COOKIE = 'minsubrf'
+LIVEBOOK_COOKIE = 'minsubrf'
 
 [http_service]
 internal_port = 8080
@@ -24,11 +19,6 @@ auto_stop_machines = 'stop'
 auto_start_machines = true
 min_machines_running = 1
 processes = ['app']
-
-[http_service.concurrency]
-type = 'connections'
-hard_limit = 1000
-soft_limit = 1000
 
 [[vm]]
 memory = '2gb'
