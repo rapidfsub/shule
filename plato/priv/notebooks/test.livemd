@@ -1,0 +1,30 @@
+<!-- livebook:{"app_settings":{"access_type":"public","slug":"test"},"deployment_group_id":"288","hub_id":"team-minsubrf"} -->
+
+# test
+
+```elixir
+Mix.install([
+  {:dns_cluster, "~> 0.2.0"}
+])
+```
+
+## Section
+
+```elixir
+Node.set_cookie(:plato)
+```
+
+```elixir
+:inet.getaddrs(~c"minsub-plato.internal", :inet6)
+```
+
+```elixir
+DNSCluster.start_link(query: {"minsub-plato", "minsub-plato.internal"})
+```
+
+```elixir
+Process.sleep(:timer.seconds(3))
+Node.list(:connected)
+```
+
+<!-- livebook:{"offset":469,"stamp":{"token":"XCP.kFrsLkVlbSmxM2sNCzPioUqtyGinsEg4utAOF9PC-uXVFqSCYgZZw83mb-yQsw","token_signature":"sqEwuKky7PMavV8ujHPst9-lDZmIMQ_YBD27VGPxvmP6jHkMgBe9rR6aoTfuKHF_XPjlyYoNZixAGXNsfc5yv4duzo4smbf3DcYfbPW3o7i36IFkX6YO92XSwNd_s9eXCZMDSyW5zsoPY7O8i5qf6hD2ZaAyVOVt3_gLYBBy8nO5CAz4WQdQIC4DJjohpRIez_kMt4elBgtONGT79flZ-uKeC_Smroz8tO-5SZuGeFkaKV1CWHZpq5YQiDQUADwKDM-RB3EV3hKmFB0T-OD-_anrHL0_WEzpgq5RwMwxlmcMzxg8Y-RvSLW3gtHpJXD2iHhV3zQ_Ix7JdwDL33uKAQ","version":1}} -->
