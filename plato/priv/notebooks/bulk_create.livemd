@@ -36,9 +36,7 @@ Repo.transact(
 ## Students
 
 ```elixir
-# df =
-#   Kino.FS.file_path("students_sample.csv")
-#   |> Explorer.DataFrame.from_csv!()
+# df
 ```
 
 ```elixir
@@ -80,9 +78,7 @@ Repo.transact(
 ## Problems
 
 ```elixir
-# df =
-#   Kino.FS.file_path("problems_sample.csv")
-#   |> Explorer.DataFrame.from_csv!()
+# df
 ```
 
 ```elixir
