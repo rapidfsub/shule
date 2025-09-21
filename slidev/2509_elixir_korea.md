@@ -102,7 +102,7 @@ layout: statement
 
 # 요청사항
 
-## 기존 거래처 정보 마이그레이션
+## 학생 및 문제은행 데이터 마이그레이션
 
 <!--
 한창 기능개발으로 바쁜 와중에 새로운 고객의 요청이 들어옵니다.\
@@ -250,6 +250,7 @@ sequenceDiagram
   participant Server as Server
 
   Livebook ->> Server: bulk_create(file)
+
 ```
 
 <!--
@@ -257,7 +258,9 @@ sequenceDiagram
 Livebook을 실행하고 attached node기능을 사용하여 실서버에 접속하여 코드를 실행하기만 하면 됩니다.\
 훨씬 간단해졌죠? 이제 배포도 없고 별도의 파일 전송도 없습니다.\
 이 과정에 대한 시연을 지금부터 시작하겠습니다.\
-(Livebook을 이용한 대량생성 시연)
+(Livebook을 이용한 대량생성 시연)\
+너무 간단해서 이게 뭐야 하실거라 강조하자면, \
+지금 우리는 별도의 파일전송 고민 없이 로컬에 있는 csv파일을 다루는 원격 서버 코드 실행의 시연을 보신겁니다.
 -->
 
 ---
@@ -301,6 +304,36 @@ layout: statement
 그리고 노트북 파일을 깃 저장소에 추가하면 어플리케이션에 로직을 추가하지도 않으면서, \
 동료들이 같은 작업을 똑같이 대신 수행해 줄 수도 있습니다.
 -->
+
+---
+layout: statement
+---
+
+# **Bonus** 
+
+---
+layout: image-right
+image: ./images/livebook_teams.png
+backgroundSize: contain
+---
+
+# Livebook Teams
+* Notebook을 사내 툴로 배포해주는 서비스
+
+---
+layout: image-right
+image: ./images/tidewave.png
+backgroundSize: contain
+---
+
+# Tidewave
+* 웹서버 로그, DB, 브라우저와 통합된 코딩 에이전트
+
+---
+layout: image
+image: ./images/tidewave_css.png
+backgroundSize: contain
+---
 
 ---
 layout: statement
