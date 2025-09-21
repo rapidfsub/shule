@@ -7,6 +7,21 @@ layout: cover
 김민섭
 
 <!--
+발표셋업
+
+내 화면
+* presenter
+
+발표화면
+* slides
+* plato app
+* bulk create notebook with attached node
+* deployed livebook
+* bulk create admin notebook
+* finder with csv files
+-->
+
+<!--
 안녕하세요, Elixir만 가능한 실서버 운영 맛보기라는 제목으로 발표를 하게 된 발표자 김민섭입니다.\
 우리는 대 어그로의 시대를 살아가고 있죠. 넘쳐나는 쇼츠, 하루가 멀다하고 나오는 새로운 AI 툴들.\
 거기다 항상 곧 AGI를 달성하겠다는 샘 알트먼까지.\
