@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for minsubrf on 2025-09-20T13:37:43+09:00
+# fly.toml app configuration file generated for minsub-plato on 2025-09-21T19:00:32+09:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'minsubrf'
+app = 'minsub-plato'
 primary_region = 'sin'
 kill_signal = 'SIGTERM'
 
@@ -13,9 +13,9 @@ kill_signal = 'SIGTERM'
 release_command = '/app/bin/migrate'
 
 [env]
-PHX_HOST = 'minsubrf.fly.dev'
+PHX_HOST = 'minsub-plato.fly.dev'
 PORT = '8080'
-RELEASE_COOKIE = 'minsubrf'
+RELEASE_COOKIE = 'plato'
 
 [http_service]
 internal_port = 8080

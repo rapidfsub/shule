@@ -1,17 +1,42 @@
 # Bulk Create
 
-## Students
-
-```elixir
-# df =
-#   Kino.FS.file_path("students_sample.csv")
-#   |> Explorer.DataFrame.from_csv!()
-```
+## Cleanup
 
 ```elixir
 alias Explorer.DataFrame
 alias Plato.Domain
 alias Plato.Repo
+```
+
+```elixir
+Repo.transact(
+  fn ->
+    for problem <- Domain.list_problems!() do
+      IO.inspect(problem)
+      Domain.destroy_problem!(problem)
+    end
+
+    for student <- Domain.list_students!() do
+      IO.inspect(student)
+      Domain.destroy_student!(student)
+    end
+
+    for campus <- Domain.list_campuses!() do
+      IO.inspect(campus)
+      Domain.destroy_campus!(campus)
+    end
+
+    Repo.rollback(:test)
+    {:ok, nil}
+  end,
+  timeout: :timer.minutes(30)
+)
+```
+
+## Students
+
+```elixir
+# df
 ```
 
 ```elixir
@@ -53,9 +78,7 @@ Repo.transact(
 ## Problems
 
 ```elixir
-# df =
-#   Kino.FS.file_path("problems_sample.csv")
-#   |> Explorer.DataFrame.from_csv!()
+# df
 ```
 
 ```elixir

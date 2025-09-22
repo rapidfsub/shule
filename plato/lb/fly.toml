@@ -1,16 +1,16 @@
-# fly.toml app configuration file generated for lb-server on 2025-09-20T15:37:30+09:00
+# fly.toml app configuration file generated for minsub-livebook on 2025-09-21T19:28:56+09:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'lb-server'
+app = 'minsub-livebook'
 primary_region = 'sin'
 
 [build]
 image = 'ghcr.io/livebook-dev/livebook:0.16.4'
 
 [env]
-LIVEBOOK_COOKIE = 'minsubrf'
+LIVEBOOK_COOKIE = 'plato'
 
 [http_service]
 internal_port = 8080
