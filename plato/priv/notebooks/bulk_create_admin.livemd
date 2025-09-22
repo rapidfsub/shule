@@ -1,0 +1,65 @@
+<!-- livebook:{"app_settings":{"access_type":"public","output_type":"rich","slug":"bulk-problems"},"deployment_group_id":"288","hub_id":"team-minsubrf"} -->
+
+# Bulk Create Admin
+
+```elixir
+Mix.install([
+  {:dns_cluster, "~> 0.2.0"},
+  {:kino, "~> 0.17.0"},
+  {:kino_explorer, "~> 0.1.25"}
+])
+```
+
+## Setup
+
+```elixir
+Node.set_cookie(:plato)
+```
+
+```elixir
+DNSCluster.start_link(query: {"minsub-plato", "minsub-plato.internal"})
+```
+
+```elixir
+alias Explorer.DataFrame
+```
+
+## Problems
+
+```elixir
+form = Kino.Control.form([file: Kino.Input.file("File")], submit: "Send")
+```
+
+```elixir
+frame = Kino.Frame.new()
+```
+
+```elixir
+form
+|> Kino.Control.stream()
+|> Kino.listen(fn event ->
+  path = Kino.Input.file_path(event.data.file.file_ref)
+  df = DataFrame.from_csv!(path)
+  rows = DataFrame.to_rows(df, atom_keys: true)
+
+  Node.list(:connected)
+  |> Enum.find(fn node ->
+    to_string(node) |> String.starts_with?("minsub-plato")
+  end)
+  |> case do
+    nil ->
+      Kino.Frame.append(frame, "not connected")
+
+    node ->
+      Node.spawn_link(node, fn ->
+        alias Plato.Domain
+        alias Plato.Repo
+# 
+      end)
+
+      Kino.Frame.append(frame, "created!")
+  end
+end)
+```
+
+<!-- livebook:{"offset":1180,"stamp":{"token":"XCP.pG0LcAe5KJyfv7n9M3Ghy2VUxfZzGXhBkE1UIx3sVCfGIdzoa06a56A6raQBDQ","token_signature":"HC6FkVEdI0qDNOywbfXDWZXqyqEGiMnoIadb4zDfd8nE05w5osF-Ea4OeYsLwTosoLzMo4drcSspNuOIur_OpsoU0gAUOa2ysYrkzHE0YUTV9DfifIMZ2a3xDQojd-2NqcU3ACa6w1HxATdvWqkxMTcCjj9f64veL3GxUjizx1lvcU-__5u41il8WOGuoYQ2lPNteLN3jHe_WqR3nswdGwyOSRsVr59btgJrqUhnRwYuMm0jwlDSYGwW9-6DrO20N6IASskA0TxkEubhnXRtrksxMmU4hFf2Yi-UplfqE0k1EnlCdvxFF70AcBIyQ6yxniNAocR-85Jh2qGc_GPWGg","version":1}} -->
